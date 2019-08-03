@@ -7,11 +7,13 @@ const helmet = require("helmet");
 const { PORT = 3000, NODE_ENV = "dev" } = process.env;
 const port = parseInt(PORT, 10);
 
+const routes = require("./routes");
+
 const { typeDefs, resolvers } = require("./server/schema");
 
 const expressApp = express();
 const nextApp = next(require("./next.config"));
-const nextRequestHandler = nextApp.getRequestHandler();
+const nextRequestHandler = routes.getRequestHandler(nextApp);
 
 // configure apollo server
 const apolloApp = new ApolloServer({
