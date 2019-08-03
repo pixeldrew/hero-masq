@@ -4,10 +4,10 @@ import React from "react";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient, InMemoryCache, HttpLink } from "apollo-boost";
 import fetch from "isomorphic-unfetch";
-import { getMainDefinition } from "apollo-utilities";
-import { WebSocketLink } from "apollo-link-ws";
-
-import { split } from "apollo-link";
+// import { getMainDefinition } from "apollo-utilities";
+// import { WebSocketLink } from "apollo-link-ws";
+//
+// import { split } from "apollo-link";
 
 import { Query } from "react-apollo";
 import gql from "graphql-tag";

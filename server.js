@@ -1,63 +1,43 @@
-const { GraphQLServer } = require("graphql-yoga");
-
 const path = require("path");
 const next = require("next");
-const conf = require("./next.config");
-const nextRoutes = require("next-routes");
+const express = require("express");
+const { ApolloServer } = require("apollo-server-express");
+const helmet = require("helmet");
 
-const {
-  NODE_ENV = "dev",
-  PORT = 3000,
-} = process.env;
-
+const { PORT = 3000, NODE_ENV = "dev" } = process.env;
 const port = parseInt(PORT, 10);
 
-const app = next(conf);
-const gqlEndpoint = "/graphql";
+const { typeDefs, resolvers } = require("./server/schema");
 
-const nextJSRoutes = nextRoutes()
-  .add({ pattern: "/", page: "/" })
-  .getRequestHandler(app);
+const expressApp = express();
+const nextApp = next(require("./next.config"));
+const nextRequestHandler = nextApp.getRequestHandler();
 
-const resolvers = require("./server/resolvers");
-
-const gqlServer = new GraphQLServer({
-  typeDefs: "./server/schema.graphql",
-  resolvers
+// configure apollo server
+const apolloApp = new ApolloServer({
+  typeDefs,
+  resolvers,
+  playground: NODE_ENV === "dev"
 });
 
-app.prepare().then(() => {
-  // fix the service worker
-  gqlServer.express.get("/service-worker.js", (req, res) => {
-    app.serveStatic(req, res, path.resolve(".next/service-worker.js"));
-  });
+// configure express middlewares
 
-  gqlServer.use((req, res, next) => {
-    if (req.path.startsWith(gqlEndpoint)) return next();
-    nextJSRoutes(req, res, next);
-  });
+expressApp.use(helmet());
 
-  gqlServer
-    .start(
-      {
-        endpoint: gqlEndpoint,
-        playground: gqlEndpoint,
-        subscriptions: "/playground",
-        port
-      },
-      () => console.log(`\n🚀 GraphQL server ready at http://localhost:${port}`)
-    )
-    .then(httpServer => {
-      async function cleanup() {
-        console.log(`\n\nDisconnecting...`);
-        httpServer.close();
-        console.log(`\nDone.\n`);
-      }
-      // process.on('SIGINT', cleanup)
-      process.on("SIGTERM", cleanup);
-    })
-    .catch(err => {
-      console.error("Server start failed ", err);
-      process.exit(1);
-    });
+// attach ApolloServer to expressApp by /graphql
+apolloApp.applyMiddleware({ app: expressApp });
+
+// allow service-worker.js to be served by next
+expressApp.get("/service-worker.js", (req, res) =>
+  nextApp.serveStatic(req, res, path.resolve(".next/service-worker.js"))
+);
+
+// allow next to serve everything else
+expressApp.get("*", nextRequestHandler);
+
+nextApp.prepare().then(() => {
+  expressApp.listen({ port }, err => {
+    if (err) throw err;
+    console.log(`🚀 Server Ready on http://localhost:${port}`);
+  });
 });
