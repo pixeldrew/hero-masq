@@ -1,0 +1,26 @@
+type Query {
+	allLeases: [DHCPLease!]!
+}
+
+type DHCPLease {
+	timestamp: String
+	mac: String
+	ip: String
+	host: String
+	id: String
+}
+
+type LeasesUpdated {
+	dateUpdated: String
+	removed: [DHCPLease]
+	added: [DHCPLease]
+}
+
+type Subscription {
+	leasesUpdated: LeasesUpdated
+}
+
+schema {
+	query: Query
+	subscription: Subscription
+}
