@@ -3,6 +3,7 @@ import React from "react";
 
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
+import { LeaseList } from "../components/LeaseList";
 
 export const ALLLEASES_QUERY = gql`
   {
@@ -17,26 +18,14 @@ function Home() {
   return (
     <div>
       <Head>
-        <title>A list of IP's from the leases file</title>
+        <title>DNSMasq Leases</title>
       </Head>
-      <p>A list of IP's from the leases file</p>
       <Query query={ALLLEASES_QUERY}>
         {({ loading, error, data: { allLeases } }) => {
           if (loading) return <div>Fetching</div>;
           if (error) return <div>Error</div>;
 
-          return (
-            <table>
-              <tbody>
-                {allLeases.map((lease, i) => (
-                  <tr key={`ip-${i}`}>
-                    <td>{lease.ip}</td>
-                    <td>{lease.mac}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          );
+          return <LeaseList allLeases={allLeases} />;
         }}
       </Query>
     </div>

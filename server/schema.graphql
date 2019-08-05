@@ -12,8 +12,6 @@ type DHCPLease {
 
 type LeasesUpdated {
 	dateUpdated: String
-	removed: [DHCPLease]
-	added: [DHCPLease]
 }
 
 type Subscription {
