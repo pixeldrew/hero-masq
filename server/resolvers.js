@@ -9,16 +9,29 @@ const LEASES_UPDATED_TOPIC = "leases_updated";
 
 const pubsub = new PubSub();
 
-const sortTimestamp = (x, y) => x.timestamp > y.timestamp;
+const renameDnsMasqId = lease => {
+  let result = ["timestamp", "mac", "ip", "host"].reduce(function(obj, key) {
+    obj[key] = lease[key];
+    return obj;
+  }, {});
 
-let leaseData = leases(fs.readFileSync(LEASE_FILE, "utf8")).sort(sortTimestamp);
+  result.clientId = lease.id;
+
+  return result;
+};
+
+const getLeases = () =>
+  leases(fs.readFileSync(LEASE_FILE, "utf8")).map(renameDnsMasqId);
+
+let leaseData = getLeases();
+
 let dateUpdated = Date.now();
+
+const hostData = [];
 
 fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
   if (eventType === "change") {
-    const newLeases = leases(fs.readFileSync(LEASE_FILE, "utf8"));
-
-    newLeases.sort(sortTimestamp);
+    leaseData = getLeases();
 
     dateUpdated = Date.now();
     pubsub.publish(LEASES_UPDATED_TOPIC, { leasesUpdated: { dateUpdated } });
@@ -27,7 +40,15 @@ fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
 
 module.exports = {
   Query: {
-    allLeases: () => leaseData
+    leases: () => leaseData,
+    dhcpHosts: () => hostData
+  },
+  Mutation: {
+    dhcpHost: (parent, args) => {
+      const host = { ...args };
+      hostData.push(host);
+      return host;
+    }
   },
   Subscription: {
     leasesUpdated: {

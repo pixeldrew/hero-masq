@@ -1,21 +1,77 @@
 type Query {
-	allLeases: [DHCPLease!]!
+	leases: [DHCPLease!]!
+	dhcpHosts: [DHCPHost!]!
 }
 
+type Mutation {
+	dhcpHost(mac: String!, ip: String!, name: String): DHCPHost!
+}
+
+"""
+converts to dhcp-range=
+"""
+type DHCPRange {
+	startIp: String
+	endIp: String
+	netMask: String
+	defaultLeaseTime: String
+}
+
+"""
+a host in the dnsmasq.lease
+"""
 type DHCPLease {
+	"expiry timestamp"
 	timestamp: String
+	"mac address of client"
 	mac: String
+	"ip address of client"
 	ip: String
+	"hostname of client"
 	host: String
-	id: String
+	"clientId provided by host"
+	clientId: String
 }
 
+"""
+last time the lease file was updated
+"""
 type LeasesUpdated {
+	"last time updated"
 	dateUpdated: String
 }
 
+"""
+subscriptions
+"""
 type Subscription {
 	leasesUpdated: LeasesUpdated
+}
+
+"""
+converts to domain=  in dnsmasq.conf
+"""
+type Domain {
+	"domain name"
+	name: String
+	"static hosts belonging to this domain"
+	dhcpHosts: [DHCPHost]
+}
+
+"""
+converts to dhcp-host= in dnsmaq.conf
+"""
+type DHCPHost {
+	"ip address"
+	ip: String!
+	"mac address"
+	mac: String
+	"client identifier"
+	clientIdentifier: String
+	"host name"
+	name: String
+	"lease expiration time"
+	leaseTime: String
 }
 
 schema {
