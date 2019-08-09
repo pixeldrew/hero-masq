@@ -7,10 +7,21 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../lib/theme";
 
 class MyApp extends App {
+  static async getInitialProps({ Component, ctx }) {
+    let pageProps = {};
+    if (Component.getInitialProps) {
+      pageProps = await Component.getInitialProps(ctx);
+    }
+
+    // This exposes query to the user
+    pageProps.query = ctx.query;
+    return { pageProps };
+  }
+
   render() {
     const { Component, pageProps, apolloClient } = this.props;
     return (
-      <Container>
+      <Container maxWidth="sm">
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <ApolloProvider client={apolloClient}>
