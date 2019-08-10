@@ -13,7 +13,12 @@ class MyApp extends App {
       pageProps = await Component.getInitialProps(ctx);
     }
 
-    // This exposes query to the user
+    pageProps.headers = {};
+
+    if (ctx.req.cookies && ctx.req.cookies.token) {
+      pageProps.headers["Authorization"] = `Bearer ${ctx.req.cookies.token}`;
+    }
+
     pageProps.query = ctx.query;
     return { pageProps };
   }
