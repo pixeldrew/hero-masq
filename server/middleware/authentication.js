@@ -3,7 +3,7 @@ const UnauthorizedError = require("express-jwt/lib/errors/UnauthorizedError");
 const jwt = require("jsonwebtoken");
 const expressUnless = require("express-unless");
 
-const { JWTSECRET, USERNAME, PASSWORD } = process.env;
+const { JWT_SECRET, USER_NAME, PASSWORD } = process.env;
 
 // 2 weeks
 const expiresIn = 1000 * 60 * 60 * 24 * 14;
@@ -24,7 +24,7 @@ const getToken = req => {
 };
 
 const validateUser = (req, res, next) => {
-  if (req.user && req.user.username !== USERNAME) {
+  if (req.user && req.user.username !== USER_NAME) {
     res.clearCookie("token", cookieOptions);
 
     return next(
@@ -53,7 +53,7 @@ const noSecurePaths = {
 module.exports = function authentication(app) {
   app.use(
     expressJWT({
-      secret: JWTSECRET,
+      secret: JWT_SECRET,
       getToken,
       credentialsRequired: false
     }).unless(noSecurePaths),
@@ -61,20 +61,28 @@ module.exports = function authentication(app) {
   );
 
   app.post("/login", (req, res) => {
-    if (req.body.username === USERNAME && req.body.password === PASSWORD) {
-      const { username } = req.body;
+    const { username, password } = req.body;
+    if (username === USER_NAME && password === PASSWORD) {
       const token = jwt.sign(
         {
           username,
           exp: Math.floor(Date.now() / 1000) + Math.floor(expiresIn / 1000)
         },
-        JWTSECRET
+        JWT_SECRET
       );
 
       res.cookie("token", token, cookieOptions);
-      res.json({ data: { header: `Authorization: Bearer ${token}` } });
+      res.json({
+        data: { header: `Authorization: Bearer ${token}`, redirect: "/" }
+      });
     } else {
       res.status(401).send({ data: { error: "unknown_user" } });
     }
+  });
+
+  app.get("/logout", (req, res) => {
+    res.clearCookie("token", cookieOptions);
+
+    res.redirect("/login");
   });
 };

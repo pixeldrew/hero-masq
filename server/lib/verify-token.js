@@ -1,18 +1,18 @@
 const jwt = require("jsonwebtoken");
 
-const { USERNAME, JWTSECRET } = process.env;
+const { USER_NAME, JWT_SECRET } = process.env;
 
 module.exports = token => {
   let user = {};
 
   try {
-    user = jwt.verify(token.split(" ")[1], JWTSECRET);
+    user = jwt.verify(token.split(" ")[1], JWT_SECRET);
 
-    if (user.username !== USERNAME) {
+    if (user.username !== USER_NAME) {
       throw new Error("invalid_user");
     }
   } catch (err) {
-    throw new UnauthorizedError("invalid_token", err);
+    throw new Error("invalid_token", err);
   }
 
   return user;

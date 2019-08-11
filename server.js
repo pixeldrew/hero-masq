@@ -5,7 +5,7 @@ const path = require("path");
 const next = require("next");
 const express = require("express");
 const { createServer } = require("http");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer, AuthenticationError } = require("apollo-server-express");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 
@@ -13,7 +13,7 @@ const authMiddleware = require("./server/middleware/authentication");
 
 const verifyToken = require("./server/lib/verify-token");
 
-const { PORT = 3000, NODE_ENV = "dev", USERNAME } = process.env;
+const { PORT = 3000, NODE_ENV = "dev", USER_NAME } = process.env;
 const port = parseInt(PORT, 10);
 
 const routes = require("./routes");
@@ -28,22 +28,31 @@ const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   playground: NODE_ENV === "dev",
-  context: ({ req }) => {
+  context: ({ req = {}, connection }) => {
     const user = req.user || {};
 
-    if (user.username !== USERNAME) {
-      throw new Error("unknown_user");
+    if (connection) {
+      return connection.context;
+    }
+
+    if (user.username !== USER_NAME) {
+      throw new AuthenticationError("unknown_user");
     }
 
     return { ...user };
   },
   subscriptions: {
+    // returns ws context
     onConnect: connectionParams => {
-      if (connectionParams.authToken) {
-        return verifyToken(connectionParams.authToken);
+      try {
+        if (connectionParams.authToken) {
+          return verifyToken(connectionParams.authToken);
+        }
+      } catch (e) {
+        throw new AuthenticationError(
+          "You must be signed in to view this resource."
+        );
       }
-
-      throw new Error("no_token");
     },
     onDisconnect: (webSocket, context) => {
       console.log("onDisconnect");
