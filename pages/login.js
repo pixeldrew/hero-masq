@@ -3,7 +3,7 @@ import SignIn from "../components/SignIn";
 import stringify from "qs-stringify";
 
 const submitForm = async ({ username, password }) => {
-  const loginData = await fetch("http://localhost:3000/login", {
+  const loginData = await fetch(process.env.HOST_URL + "login", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: stringify({ username, password })
