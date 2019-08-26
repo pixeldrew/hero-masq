@@ -52,6 +52,7 @@
     "react": "^16.8.6",
     "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6",
+    "react-text-mask": "^5.4.3",
     "subscriptions-transport-ws": "^0.9.16"
   },
   "devDependencies": {

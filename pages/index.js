@@ -6,6 +6,8 @@ import { makeStyles } from "@material-ui/core";
 
 import { Leases } from "../components/Leases";
 import { DHCPRangeForm } from "../components/DHCPRangeForm";
+import { StaticHostForm } from "../components/StaticHostForm";
+import { DomainNameForm } from "../components/DomainNameForm";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,6 +25,8 @@ function Home({ headers }) {
       </Head>
       <Paper className={classes.root}>
         <DHCPRangeForm />
+        <StaticHostForm />
+        <DomainNameForm />
         <Leases />
       </Paper>
     </div>

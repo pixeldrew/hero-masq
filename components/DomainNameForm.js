@@ -1,11 +1,9 @@
 import React from "react";
+import useForm from "../hooks/useForm";
 
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import IPMaskedInput from "./IPMaskedInput";
-
-import useForm from "../hooks/useForm";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -21,10 +19,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function DHCPRangeForm({ submitForm }) {
+export function DomainNameForm({ submitForm }) {
   const { values, handleChange, handleSubmit } = useForm(submitForm, {
-    startIpRange: "",
-    endIpRange: ""
+    domainName: ""
   });
 
   const classes = useStyles();
@@ -37,32 +34,17 @@ export function DHCPRangeForm({ submitForm }) {
       onSubmit={handleSubmit}
     >
       <TextField
-        id="startIpRange"
-        label="Start Ip"
+        id="domainName"
+        label="Domain Name"
         className={classes.textField}
-        value={values.startIpRange}
+        value={values.domainName}
         onChange={handleChange}
         margin="normal"
         variant="outlined"
-        InputProps={{
-          inputComponent: IPMaskedInput
-        }}
       />
 
-      <TextField
-        id="endIpRange"
-        label="End Ip"
-        className={classes.textField}
-        value={values.endIpRange}
-        onChange={handleChange}
-        margin="normal"
-        variant="outlined"
-        InputProps={{
-          inputComponent: IPMaskedInput
-        }}
-      />
       <Button variant="contained" color="primary" className={classes.button}>
-        Add
+        Save
       </Button>
     </form>
   );
