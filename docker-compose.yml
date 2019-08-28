@@ -1,0 +1,100 @@
+version: "3"
+services:
+  dehydrated:
+    build: ./dehydrated
+    volumes:
+      - ./dehydrated/certs:/dehydrated/certs
+
+  dns-over-https-client:
+    image: goofball222/dns-over-https
+    container_name: dns-over-https-client
+    restart: unless-stopped
+    networks:
+      backend:
+        ipv4_address: 172.31.0.30
+    volumes:
+      # DNS-over-HTTPS requires a mapped volume for persistent configuration storage, both client and server.
+      - ./dns-over-https:/opt/dns-over-https/conf
+    environment:
+      - TZ=UTC
+    # Override image default command to start in DNS-over-HTTPS client mode.
+    command: [doh-client]
+
+  dns-over-tls:
+    image: goofball222/stunnel
+    container_name: dns-over-tls
+    restart: unless-stopped
+    depends_on:
+      - dehydrated
+    networks:
+      backend:
+        # Configure specific, known address on "backend" stack network
+        ipv4_address: 172.31.0.31
+    ports:
+      - 853:853/tcp
+      - 853:853/udp
+    volumes:
+      # STunnel needs a valid certificate and private key to use to encrypt the TLS connections.
+      # Pull in LetsEncrypt cert and key **READ ONLY** for DNS-over-TLS hostname(s).
+      # Requested by dehydrated
+      - ${PWD}/dehydrated/certs/cert.pem:/etc/stunnel/stunnel.pem:ro
+      - ${PWD}/dehydrated/certs/privkey.pem:/etc/stunnel/stunnel.key:ro
+    environment:
+      - STUNNEL_ACCEPT=853
+      - STUNNEL_CONNECT=hero-mask:53
+      - STUNNEL_DEBUG=4
+      - STUNNEL_SERVICE=dns-over-tls
+      - TZ=UTC
+
+  dns-over-https:
+    image: goofball222/dns-over-https
+    container_name: dns-over-https
+    restart: unless-stopped
+    networks:
+      backend:
+        # Configure specific, known address on "backend" stack network
+        ipv4_address: 172.31.0.32
+    ports:
+      - 8053:8053/tcp
+    volumes:
+      # DNS-over-HTTPS requires a mapped volume for persistent configuration storage, both client and server.
+      - ./dns-over-https:/opt/dns-over-https/conf
+    environment:
+      - TZ=UTC
+
+  hero-mask:
+    build: .
+    ports:
+      - "3000:3000/tcp"
+      - "53:53/udp"
+      - "53:53/tcp"
+      - "67:67/udp"
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    dns:
+      - 127.0.0.1
+    volumes:
+      - "./dnsmasq-conf:/etc/dnsmasq.d/"
+    depends_on:
+      - dhcphelper
+      - dns-over-https-client
+    environment:
+      - __DNS=172.31.0.30
+    networks:
+      backend:
+        ipv4_address: 172.31.0.33
+
+  dhcphelper:
+    build: ./dhcp-helper
+    restart: unless-stopped
+    network_mode: "host"
+    command: -s 172.31.0.33
+    cap_add:
+      - NET_ADMIN
+
+networks:
+  backend:
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16

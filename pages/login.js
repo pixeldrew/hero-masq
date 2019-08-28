@@ -12,6 +12,8 @@ const submitForm = async ({ username, password }) => {
   const result = await loginData.json();
 
   console.log("result", result);
+
+  window.location = result.redirect;
 };
 
 const Login = props => <SignIn submitForm={submitForm} />;

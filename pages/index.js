@@ -1,7 +1,7 @@
 import Head from "next/head";
 
 import React from "react";
-import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core";
 
 import { Leases } from "../components/Leases";
@@ -11,7 +11,9 @@ import { DomainNameForm } from "../components/DomainNameForm";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(3, 2)
+    background: "grey",
+    padding: theme.spacing(3, 2),
+    flexGrow: 1
   }
 }));
 
@@ -23,12 +25,25 @@ function Home({ headers }) {
       <Head>
         <title>DNSMasq Leases</title>
       </Head>
-      <Paper className={classes.root}>
-        <DHCPRangeForm />
-        <StaticHostForm />
-        <DomainNameForm />
-        <Leases />
-      </Paper>
+      <Grid
+        container
+        className={classes.root}
+        spacing={4}
+        justify="space-evenly"
+      >
+        <Grid item xs={4}>
+          <DomainNameForm />
+        </Grid>
+        <Grid item xs={6}>
+          <DHCPRangeForm />
+        </Grid>
+        <Grid item xs={12}>
+          <StaticHostForm />
+        </Grid>
+        <Grid item xs={12}>
+          <Leases />
+        </Grid>
+      </Grid>
     </div>
   );
 }

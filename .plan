@@ -1,2 +1,3 @@
+clean up docker compose, perhaps remove the dehydrate, dns-over-https-server and the dns-over-tls services
 write server routine that outputs config to file
 write server routine that restart dnsmasq using rc-service dnsmasq resetart

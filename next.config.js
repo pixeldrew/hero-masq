@@ -1,4 +1,5 @@
 // next.config.js
+require("dotenv-defaults").config();
 const withOffline = require("next-offline");
 
 const dev = process.env.NODE_ENV !== "production";
@@ -17,8 +18,9 @@ const protocol = env["PORT"] === "443" ? "https:" : "http:";
 const websocketProtocol = env["PORT"] === "443" ? "wss:" : "ws:";
 
 // set default urls
-env["HOST_URL"] = `//${env["HOST_NAME"]}${port}/`;
+env["HOST_URL"] = `//${env["HOST_NAME"]}${port}`;
 env["GRAPHQL_URL"] = `${env["HOST_URL"]}${env["GRAPHQL_ENDPOINT"]}`;
+env["WEBSOCKET_PROTOCOL"] = websocketProtocol;
 env["WEBSOCKET_URL"] = `${websocketProtocol}${env["GRAPHQL_URL"]}`;
 env["GRAPHQL_URL"] = `${protocol}${env["GRAPHQL_URL"]}`;
 

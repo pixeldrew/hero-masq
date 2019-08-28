@@ -1,0 +1,9 @@
+.git*
+.next
+.idea
+node_modules
+npm-debug.log
+dehydrated
+dhcp-helper
+dnsmasq-conf
+dns-over-https
