@@ -1,5 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -72,76 +75,91 @@ export function StaticHostForm({ submitForm }) {
     macAddress: "",
     ipAddress: "",
     hostName: "",
+    clientId: "",
     leaseExpiry: leaseExpirations[0].value
   });
 
   const classes = useStyles();
 
   return (
-    <form
-      className={classes.container}
-      noValidate
-      autoComplete="off"
-      onSubmit={handleSubmit}
-    >
-      <TextField
-        id="macAddress"
-        label="MAC Address"
-        className={classes.textField}
-        value={values.macAddress}
-        onChange={handleChange}
-        margin="normal"
-        variant="outlined"
-        helperText="Please enter the MAC address"
-      />
-
-      <TextField
-        id="ipAddress"
-        label="IP Address"
-        className={classes.textField}
-        value={values.ipAddress}
-        onChange={handleChange}
-        margin="normal"
-        variant="outlined"
-        helperText="Please enter an IP address"
-        InputProps={{
-          inputComponent: IPMaskedInput
-        }}
-      />
-      <TextField
-        id="hostName"
-        label="Host Name"
-        className={classes.textField}
-        value={values.hostName}
-        onChange={handleChange}
-        helperText="Please enter a host name"
-        margin="normal"
-        variant="outlined"
-      />
-      <TextField
-        id="lease-expiry"
-        select
-        label="Lease Expiry"
-        className={classes.textField}
-        value={values.leaseExpiry}
-        onChange={handleChange("leaseExpiry")}
-        SelectProps={{
-          MenuProps: {
-            className: classes.menu
-          }
-        }}
-        helperText="Please select an expiry"
-        margin="normal"
+    <Card>
+      <form
+        className={classes.container}
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
       >
-        {leaseExpirations.map(option => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
-          </MenuItem>
-        ))}
-      </TextField>
-      <Button variant="contained" color="primary" className={classes.button}>
-        Add
-      </Button>
-    </form>
+        <CardContent>
+          <TextField
+            id="ipAddress"
+            label="IP Address"
+            className={classes.textField}
+            value={values.ipAddress}
+            onChange={handleChange}
+            margin="normal"
+            variant="outlined"
+            InputProps={{
+              inputComponent: IPMaskedInput
+            }}
+          />
+          <TextField
+            id="hostName"
+            label="Host Name"
+            className={classes.textField}
+            value={values.hostName}
+            onChange={handleChange}
+            margin="normal"
+            variant="outlined"
+          />
+
+          <TextField
+            id="macAddress"
+            label="MAC Address"
+            className={classes.textField}
+            value={values.macAddress}
+            onChange={handleChange}
+            margin="normal"
+            variant="outlined"
+          />
+
+          <TextField
+            id="clientId"
+            label="Client ID"
+            className={classes.textField}
+            value={values.clientId}
+            onChange={handleChange}
+            margin="normal"
+            variant="outlined"
+          />
+
+          <TextField
+            id="lease-expiry"
+            select
+            label="Expires"
+            className={classes.textField}
+            value={values.leaseExpiry}
+            onChange={handleChange("leaseExpiry")}
+            variant="outlined"
+            SelectProps={{
+              MenuProps: {
+                className: classes.menu
+              }
+            }}
+            margin="normal"
+          >
+            {leaseExpirations.map(option => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </CardContent>
+        <CardActions>
+          <Button variant="outlined" color="primary" className={classes.button}>
+            Add
+          </Button>
+        </CardActions>
+      </form>
+    </Card>
   );
 }

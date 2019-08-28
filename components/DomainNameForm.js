@@ -4,6 +4,9 @@ import useForm from "../hooks/useForm";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -27,25 +30,30 @@ export function DomainNameForm({ submitForm }) {
   const classes = useStyles();
 
   return (
-    <form
-      className={classes.container}
-      noValidate
-      autoComplete="off"
-      onSubmit={handleSubmit}
-    >
-      <TextField
-        id="domainName"
-        label="Domain Name"
-        className={classes.textField}
-        value={values.domainName}
-        onChange={handleChange}
-        margin="normal"
-        variant="outlined"
-      />
-
-      <Button variant="contained" color="primary" className={classes.button}>
-        Save
-      </Button>
-    </form>
+    <Card>
+      <form
+        className={classes.container}
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
+      >
+        <CardContent>
+          <TextField
+            id="domainName"
+            label="Domain Name"
+            className={classes.textField}
+            value={values.domainName}
+            onChange={handleChange}
+            margin="normal"
+            variant="outlined"
+          />
+        </CardContent>
+        <CardActions>
+          <Button color="primary" variant="outlined" className={classes.button}>
+            Save
+          </Button>
+        </CardActions>
+      </form>
+    </Card>
   );
 }

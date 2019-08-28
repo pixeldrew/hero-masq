@@ -1,6 +1,7 @@
 import { Query } from "react-apollo";
 import { LastUpdated } from "./LastUpdated";
 import { LeaseList } from "./LeaseList";
+import Paper from "@material-ui/core/Paper";
 
 import React from "react";
 import gql from "graphql-tag";
@@ -25,10 +26,10 @@ export function Leases() {
         if (error) return <div>Error</div>;
 
         return (
-          <>
+          <Paper>
             <LeaseList leases={leases} />
             <LastUpdated triggerRefetch={refetch} />
-          </>
+          </Paper>
         );
       }}
     </Query>

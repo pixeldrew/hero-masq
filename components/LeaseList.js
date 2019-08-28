@@ -1,6 +1,7 @@
 import * as PropTypes from "prop-types";
 import React from "react";
 
+import { formatDistance } from "date-fns";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -21,21 +22,23 @@ export function LeaseList({ leases }) {
     <Table className={classes.table}>
       <TableHead>
         <TableRow>
-          <TableCell>Client ID</TableCell>
-          <TableCell>Host Name</TableCell>
           <TableCell>IP Address</TableCell>
+          <TableCell>Host Name</TableCell>
           <TableCell>MAC Address</TableCell>
+          <TableCell>Client ID</TableCell>
           <TableCell>Expires</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {leases.map((lease, i) => (
           <TableRow key={`ip-${i}`}>
-            <TableCell>{lease.clientId}</TableCell>
-            <TableCell>{lease.host}</TableCell>
             <TableCell>{lease.ip}</TableCell>
+            <TableCell>{lease.host}</TableCell>
             <TableCell>{lease.mac}</TableCell>
-            <TableCell>{lease.timestamp}</TableCell>
+            <TableCell>{lease.clientId}</TableCell>
+            <TableCell>
+              {formatDistance(new Date(lease.timestamp * 1000), Date.now())}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
