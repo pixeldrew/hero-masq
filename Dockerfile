@@ -1,11 +1,11 @@
 FROM mhart/alpine-node:12
 LABEL maintainer="drew@foe.hn"
 
-WORKDIR /usr/src/hero-mask
+WORKDIR /usr/src/hero-masq
 
 # fetch dnsmasq
 RUN apk update \
-	&& apk --no-cache add dnsmasq
+	&& apk --no-cache add dnsmasq supervisor
 #configure dnsmasq
 RUN mkdir -p /etc/default/
 RUN echo -e "ENABLED=1\nIGNORE_RESOLVCONF=yes" > /etc/default/dnsmasq
@@ -16,8 +16,13 @@ RUN npm install --production
 
 COPY . .
 
+ARG DNS
+
+ENV DNS=$DNS
 RUN npm run build
 
-EXPOSE 3000 53 67/udp
+RUN ./configure.sh
+
+EXPOSE 3000 53
 ENV NODE_ENV="production";
-ENTRYPOINT ["npm","start"]
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

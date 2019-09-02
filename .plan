@@ -1,3 +1,5 @@
-clean up docker compose, perhaps remove the dehydrate, dns-over-https-server and the dns-over-tls services
-write server routine that outputs config to file
-write server routine that restart dnsmasq using rc-service dnsmasq resetart
+write component GQL mutations
+write server mutation resolver for domainName and DHCPRange
+write server routine that kills dnsmasq, supervisor should restart it
+write unit tests for server routine write-dnsmasq-config
+investigate graphql authentication and authorization using schema directives
