@@ -17,7 +17,6 @@ export const LastUpdated = ({ triggerRefetch, lastUpdated = Date.now() }) => {
         loading
       }) => {
         if (dateUpdated > lastUpdated) {
-          console.log("triggering refresh");
           triggerRefetch();
           return <h4>Refreshing</h4>;
         }

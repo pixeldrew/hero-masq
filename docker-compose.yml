@@ -28,7 +28,8 @@ services:
     dns:
       - 127.0.0.1
     volumes:
-      - "./dnsmasq-conf:/etc/dnsmasq.d/"
+      - "./dnsmasq/conf:/etc/dnsmasq.d/"
+      - "./dnsmasq/lease:/var/lib/dnsmasq/"
     depends_on:
       - dhcphelper
       - dnscrypt-proxy

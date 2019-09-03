@@ -34,7 +34,7 @@ function Home({ headers }) {
         <Grid item xs={4}>
           <DomainNameForm />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={8}>
           <DHCPRangeForm />
         </Grid>
         <Grid item xs={12}>

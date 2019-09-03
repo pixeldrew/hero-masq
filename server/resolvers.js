@@ -1,9 +1,10 @@
 const fs = require("fs");
 const leases = require("dnsmasq-leases");
-const {
-  LEASE_FILE = __dirname + "/../tests/data/dnsmasq.leases"
-} = process.env;
 const { PubSub } = require("graphql-subscriptions");
+
+const writeConfig = require("./lib/write-dnsmasq-config");
+
+const { LEASE_FILE } = require("../lib/constants");
 
 const LEASES_UPDATED_TOPIC = "leases_updated";
 
@@ -27,7 +28,9 @@ let leaseData = getLeases();
 
 let dateUpdated = Date.now();
 
-const hostData = [];
+let staticHosts = [];
+let dhcpRange = {};
+let domain = {};
 
 fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
   if (eventType === "change") {
@@ -41,13 +44,24 @@ fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
 module.exports = {
   Query: {
     leases: () => leaseData,
-    dhcpHosts: () => hostData
+    staticHosts: () => hostData
   },
   Mutation: {
-    dhcpHost: (parent, args) => {
+    addStaticHost: (parent, args) => {
       const host = { ...args };
-      hostData.push(host);
+      staticHosts.push(host);
+      writeConfig({ staticHosts, dhcpRange, domain });
       return host;
+    },
+    saveDHCPRange: (parent, args) => {
+      dhcpRange = { ...args };
+      writeConfig({ staticHosts, dhcpRange, domain });
+      return dhcpRange;
+    },
+    saveDomain: (parent, args) => {
+      domain = { ...args };
+      writeConfig({ staticHosts, dhcpRange, domain });
+      return domain;
     }
   },
   Subscription: {

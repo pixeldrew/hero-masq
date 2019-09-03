@@ -28,6 +28,9 @@ const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   playground: NODE_ENV === "dev",
+  tracing: true,
+  cacheControl: true,
+  engine: false,
   context: ({ req = {}, connection }) => {
     const user = req.user || {};
 
@@ -54,9 +57,7 @@ const apolloServer = new ApolloServer({
         );
       }
     },
-    onDisconnect: (webSocket, context) => {
-      console.log("onDisconnect");
-    }
+    onDisconnect: (webSocket, context) => {}
   }
 });
 

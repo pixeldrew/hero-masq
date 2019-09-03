@@ -1,10 +1,22 @@
 type Query {
 	leases: [DHCPLease!]!
-	dhcpHosts: [DHCPHost!]!
+	staticHosts: [StaticHost!]!
 }
 
 type Mutation {
-	dhcpHost(mac: String!, ip: String!, name: String): DHCPHost!
+	addStaticHost(
+		macAddress: String!
+		ipAddress: String!
+		hostName: String
+		clientId: String
+		leaseExpiry: String
+	): StaticHost!
+	saveDHCPRange(
+		startIp: String!
+		endIp: String!
+		leaseExpiry: String
+	): DHCPRange
+	saveDomain(name: String): Domain
 }
 
 """
@@ -13,8 +25,7 @@ converts to dhcp-range=
 type DHCPRange {
 	startIp: String
 	endIp: String
-	netMask: String
-	defaultLeaseTime: String
+	leaseExpiry: String
 }
 
 """
@@ -54,24 +65,22 @@ converts to domain=  in dnsmasq.conf
 type Domain {
 	"domain name"
 	name: String
-	"static hosts belonging to this domain"
-	dhcpHosts: [DHCPHost]
 }
 
 """
 converts to dhcp-host= in dnsmaq.conf
 """
-type DHCPHost {
+type StaticHost {
 	"ip address"
-	ip: String!
+	ipAddress: String!
 	"mac address"
-	mac: String
+	macAddress: String
 	"client identifier"
-	clientIdentifier: String
+	clientId: String
 	"host name"
-	name: String
+	hostName: String
 	"lease expiration time"
-	leaseTime: String
+	leaseExpiry: String
 }
 
 schema {

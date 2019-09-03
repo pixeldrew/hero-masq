@@ -1,5 +1,5 @@
-write component GQL mutations
+write update staticHost mutation
+write component GQL for mutations
 write server mutation resolver for domainName and DHCPRange
-write server routine that kills dnsmasq, supervisor should restart it
-write unit tests for server routine write-dnsmasq-config
 investigate graphql authentication and authorization using schema directives
+investigate writing an AST for dnsmasq config

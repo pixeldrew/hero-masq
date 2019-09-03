@@ -5,13 +5,14 @@ import TextField from "@material-ui/core/TextField";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
-import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import IPMaskedInput from "./IPMaskedInput";
-
+import MenuItem from "@material-ui/core/MenuItem";
 import { object, string } from "yup";
 
 import useForm from "../hooks/useForm";
+
+import IPMaskedInput from "./IPMaskedInput";
+import { LEASE_EXPIRATIONS } from "../lib/constants";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -34,12 +35,14 @@ export function DHCPRangeForm({ submitForm }) {
   const { values, handleChange, handleSubmit, hasError } = useForm(
     submitForm,
     {
-      startIpRange: "",
-      endIpRange: ""
+      startIp: "",
+      endIp: "",
+      leaseExpiry: "1d"
     },
     object({
-      startIpRange: string().required("Start IP is Required"),
-      endIpRange: string().required("End IP is Required")
+      startIp: string().required("Start IP is Required"),
+      endIp: string().required("End IP is Required"),
+      leaseExpiry: string()
     })
   );
 
@@ -55,11 +58,11 @@ export function DHCPRangeForm({ submitForm }) {
       >
         <CardContent>
           <TextField
-            id="startIpRange"
+            id="startIp"
             label="Start IP"
-            error={hasError("startIpRange")}
+            error={hasError("startIp")}
             className={classes.textField}
-            value={values.startIpRange}
+            value={values.startIp}
             onChange={handleChange}
             margin="normal"
             variant="outlined"
@@ -69,11 +72,11 @@ export function DHCPRangeForm({ submitForm }) {
           />
 
           <TextField
-            id="endIpRange"
+            id="endIp"
             label="End IP"
-            error={hasError("endIpRange")}
+            error={hasError("endIp")}
             className={classes.textField}
-            value={values.endIpRange}
+            value={values.endIp}
             onChange={handleChange}
             margin="normal"
             variant="outlined"
@@ -81,6 +84,28 @@ export function DHCPRangeForm({ submitForm }) {
               inputComponent: IPMaskedInput
             }}
           />
+
+          <TextField
+            id="lease-expiry"
+            select
+            label="Lease Expiry"
+            className={classes.textField}
+            value={values.leaseExpiry}
+            onChange={handleChange("leaseExpiry")}
+            variant="outlined"
+            SelectProps={{
+              MenuProps: {
+                className: classes.menu
+              }
+            }}
+            margin="normal"
+          >
+            {LEASE_EXPIRATIONS.map(option => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
         </CardContent>
         <CardActions>
           <Button

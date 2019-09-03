@@ -9,6 +9,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 import useForm from "../hooks/useForm";
 import IPMaskedInput from "./IPMaskedInput";
+import { LEASE_EXPIRATIONS } from "../lib/constants";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -27,56 +28,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const leaseExpirations = [
-  {
-    value: "15m",
-    label: "15 minutes"
-  },
-  {
-    value: "30m",
-    label: "45 minutes"
-  },
-  {
-    value: "45m",
-    label: "45 minutes"
-  },
-  {
-    value: "1h",
-    label: "1 hour"
-  },
-  {
-    value: "2h",
-    label: "2 hours"
-  },
-  {
-    value: "4h",
-    label: "4 hours"
-  },
-  {
-    value: "8h",
-    label: "8 hours"
-  },
-  {
-    value: "1d",
-    label: "1 day"
-  },
-  {
-    value: "1w",
-    label: "1 week"
-  },
-  {
-    value: "infinite",
-    label: "Infinite"
-  }
-];
-
 export function StaticHostForm({ submitForm }) {
   const { values, handleChange, handleSubmit } = useForm(submitForm, {
     macAddress: "",
     ipAddress: "",
     hostName: "",
     clientId: "",
-    leaseExpiry: leaseExpirations[0].value
+    leaseExpiry: LEASE_EXPIRATIONS[0].value
   });
 
   const classes = useStyles();
@@ -147,7 +105,7 @@ export function StaticHostForm({ submitForm }) {
             }}
             margin="normal"
           >
-            {leaseExpirations.map(option => (
+            {LEASE_EXPIRATIONS.map(option => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
