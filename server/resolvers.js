@@ -1,6 +1,7 @@
 const fs = require("fs");
 const leases = require("dnsmasq-leases");
 const { PubSub } = require("graphql-subscriptions");
+const { GraphQLDateTime } = require("graphql-iso-date");
 
 const writeConfig = require("./lib/write-dnsmasq-config");
 
@@ -41,12 +42,13 @@ let domain = {
 fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
   if (eventType === "change") {
     leaseData = getLeases();
-    dateUpdated = Date.now();
+    dateUpdated = new Date();
     pubsub.publish(LEASES_UPDATED_TOPIC, { leasesUpdated: { dateUpdated } });
   }
 });
 
 module.exports = {
+  GraphQLDateTime,
   Query: {
     leases: () => leaseData,
     staticHosts: () => hostData,

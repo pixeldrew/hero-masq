@@ -1,6 +1,9 @@
 const { importSchema } = require("graphql-import");
 
+const typeDefs = importSchema(__dirname + "/schema.graphql");
+const resolvers = require("./resolvers");
+
 module.exports = {
-  typeDefs: importSchema(__dirname + "/schema.graphql"),
-  resolvers: require("./resolvers")
+  typeDefs,
+  resolvers
 };

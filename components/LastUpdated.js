@@ -12,21 +12,23 @@ const LEASES_UPDATED_SUBSCRIPTION = gql`
   }
 `;
 export const LastUpdated = ({ triggerRefetch }) => {
-  const [lastUpdated, setLastUpdated] = useState(Date.now());
-  const [sinceLastUpdated, setSinceLastUpdated] = useState(Date.now());
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [sinceLastUpdated, setSinceLastUpdated] = useState(new Date());
   const {
-    data: { leasesUpdated: { dateUpdated = NaN } = {} } = {},
+    data: { leasesUpdated: { dateUpdated = null } = {} } = {},
     loading
   } = useSubscription(LEASES_UPDATED_SUBSCRIPTION);
 
   useInterval(() => {
-    setSinceLastUpdated(Date.now());
+    setSinceLastUpdated(new Date());
   }, 1000 * 60);
 
-  if (dateUpdated > lastUpdated) {
+  const dateUpdatedDateTime = new Date(dateUpdated);
+
+  if (dateUpdatedDateTime > lastUpdated) {
     triggerRefetch();
-    setLastUpdated(parseInt(dateUpdated, 10));
-    setSinceLastUpdated(parseInt(dateUpdated, 10));
+    setLastUpdated(dateUpdatedDateTime);
+    setSinceLastUpdated(dateUpdatedDateTime);
     return <h4>Refreshing</h4>;
   }
 
@@ -34,10 +36,7 @@ export const LastUpdated = ({ triggerRefetch }) => {
     <h4>
       {!loading &&
         dateUpdated &&
-        `Last Updated ${formatDistance(
-          new Date(lastUpdated),
-          new Date(sinceLastUpdated)
-        )} ago`}
+        `Last Updated ${formatDistance(lastUpdated, sinceLastUpdated)} ago`}
     </h4>
   );
 };
