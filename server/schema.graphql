@@ -1,6 +1,7 @@
 type Query {
 	leases: [DHCPLease!]!
 	staticHosts: [StaticHost!]!
+	dhcpRange: DHCPRange!
 }
 
 type Mutation {

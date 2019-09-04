@@ -26,16 +26,21 @@ const getLeases = () =>
 
 let leaseData = getLeases();
 
-let dateUpdated = Date.now();
+let dateUpdated = new Date();
 
 let staticHosts = [];
-let dhcpRange = {};
-let domain = {};
+let dhcpRange = {
+  startIp: "",
+  endIP: "",
+  leaseExpiry: ""
+};
+let domain = {
+  name: ""
+};
 
 fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
   if (eventType === "change") {
     leaseData = getLeases();
-
     dateUpdated = Date.now();
     pubsub.publish(LEASES_UPDATED_TOPIC, { leasesUpdated: { dateUpdated } });
   }
@@ -44,7 +49,8 @@ fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
 module.exports = {
   Query: {
     leases: () => leaseData,
-    staticHosts: () => hostData
+    staticHosts: () => hostData,
+    dhcpRange: () => dhcpRange
   },
   Mutation: {
     addStaticHost: (parent, args) => {

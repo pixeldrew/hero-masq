@@ -1,4 +1,4 @@
-import { Query } from "react-apollo";
+import { useQuery } from "@apollo/react-hooks";
 import { LastUpdated } from "./LastUpdated";
 import { LeaseList } from "./LeaseList";
 import Paper from "@material-ui/core/Paper";
@@ -19,20 +19,21 @@ const LEASES_QUERY = gql`
 `;
 
 export function Leases() {
-  return (
-    <Query query={LEASES_QUERY}>
-      {({ loading, error, data: { leases }, refetch }) => {
-        if (loading) return <div>Fetching</div>;
-        if (error) return <div>Error</div>;
+  const {
+    loading,
+    error,
+    data: { leases },
+    refetch
+  } = useQuery(LEASES_QUERY);
 
-        return (
-          <Paper>
-            <LeaseList leases={leases} />
-            <LastUpdated triggerRefetch={refetch} />
-          </Paper>
-        );
-      }}
-    </Query>
+  if (loading) return <div>Fetching</div>;
+  if (error) return <div>Error</div>;
+
+  return (
+    <Paper>
+      <LeaseList leases={leases} />
+      <LastUpdated triggerRefetch={refetch} />
+    </Paper>
   );
 }
 

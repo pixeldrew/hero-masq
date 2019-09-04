@@ -39,7 +39,7 @@ function getDHCPRange(dhcpRange) {
     mask = `${mask},`;
   }
 
-  if (startIp && endIp && leaseExpiry) {
+  if (startIp !== "" && endIp !== "") {
     config += `dhcp-range=${startIp},${endIp},${mask}${leaseExpiry}\n`;
   }
 
