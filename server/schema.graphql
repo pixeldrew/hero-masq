@@ -1,92 +1,86 @@
-scalar GraphQLDateTime
-
-type Query {
-	leases(ip: String, mac: String, host: String): [DHCPLease!]!
-	staticHosts: [StaticHost!]!
-	dhcpRange: DHCPRange!
+schema {
+	query: Query
+	mutation: Mutation
+	subscription: Subscription
 }
 
-type Mutation {
-	addStaticHost(
-		macAddress: String!
-		ipAddress: String!
-		hostName: String
-		clientId: String
-		leaseExpiry: String
-	): StaticHost!
-	saveDHCPRange(
-		startIp: String!
-		endIp: String!
-		leaseExpiry: String
-	): DHCPRange
-	saveDomain(name: String): Domain
-}
-
-"""
-converts to dhcp-range=
-"""
-type DHCPRange {
-	startIp: String
-	endIp: String
-	leaseExpiry: String
-}
-
-"""
-a host in the dnsmasq.lease
-"""
+"a host in the dnsmasq.lease"
 type DHCPLease {
-	"expiry timestamp"
-	timestamp: String
-	"mac address of client"
-	mac: String
-	"ip address of client"
-	ip: String
+	"client provided by host"
+	client: String
 	"hostname of client"
 	host: String
-	"clientId provided by host"
-	clientId: String
+	"ip address of client"
+	ip: String
+	"mac address of client"
+	mac: String
+	"expiry timestamp"
+	timestamp: String
 }
 
-"""
-last time the lease file was updated
-"""
-type LeasesUpdated {
-	"last time updated"
-	dateUpdated: GraphQLDateTime
+"converts to dhcp-range="
+type DHCPRange {
+	endIp: String
+	leaseExpiry: String
+	startIp: String
 }
 
-"""
-subscriptions
-"""
-type Subscription {
-	leasesUpdated: LeasesUpdated
-}
-
-"""
-converts to domain=  in dnsmasq.conf
-"""
+"converts to domain=  in dnsmasq.conf"
 type Domain {
 	"domain name"
 	name: String
 }
 
-"""
-converts to dhcp-host= in dnsmaq.conf
-"""
-type StaticHost {
-	"ip address"
-	ipAddress: String!
-	"mac address"
-	macAddress: String
-	"client identifier"
-	clientId: String
-	"host name"
-	hostName: String
-	"lease expiration time"
-	leaseExpiry: String
+"last time the lease file was updated"
+type LeasesUpdated {
+	"last time updated"
+	dateUpdated: DateTime
 }
 
-schema {
-	query: Query
-	subscription: Subscription
+type Mutation {
+	addStaticHost(
+		clientId: String
+		hostName: String
+		ipAddress: String!
+		leaseExpiry: String
+		macAddress: String!
+	): StaticHost!
+	deleteStaticHost(uid: String): Boolean
+	saveDHCPRange(
+		endIp: String!
+		leaseExpiry: String
+		startIp: String!
+	): DHCPRange
+	saveDomain(name: String): Domain
+	saveConfig: Boolean
 }
+
+type Query {
+	dhcpRange: DHCPRange!
+	leases(host: String, ip: String, mac: String): [DHCPLease!]!
+	staticHosts: [StaticHost!]!
+}
+
+"converts to dhcp-host= in dnsmaq.conf"
+type StaticHost @uid(from: ["ip"]) {
+	"client identifier"
+	client: String
+	"host name"
+	host: String
+	"ip address"
+	ip: String!
+	"lease expiration time"
+	leaseExpiry: String
+	"mac address"
+	mac: String
+}
+
+"subscriptions"
+type Subscription {
+	leasesUpdated: LeasesUpdated
+}
+
+"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
+scalar DateTime
+
+directive @uid(from: [String]) on OBJECT

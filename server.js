@@ -17,7 +17,7 @@ const { PORT = 3000, NODE_ENV = "dev", USER_NAME } = process.env;
 const port = parseInt(PORT, 10);
 
 const routes = require("./routes");
-const { typeDefs, resolvers } = require("./server/schema");
+const { typeDefs, resolvers, schemaDirectives } = require("./server/schema");
 
 const app = express();
 const nextApp = next(require("./next.config"));
@@ -27,6 +27,7 @@ const nextRequestHandler = routes.getRequestHandler(nextApp);
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
+  schemaDirectives,
   playground: NODE_ENV === "dev",
   tracing: true,
   cacheControl: true,

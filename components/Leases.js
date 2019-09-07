@@ -11,7 +11,7 @@ const LEASES_QUERY = gql`
     leases {
       mac
       ip
-      clientId
+      client
       host
       timestamp
     }

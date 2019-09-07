@@ -1,7 +1,8 @@
 const fs = require("fs");
 const leases = require("dnsmasq-leases");
 const { PubSub } = require("graphql-subscriptions");
-const { GraphQLDateTime } = require("graphql-iso-date");
+const { GraphQLDateTime: DateTime } = require("graphql-iso-date");
+const { createHash } = require("crypto");
 
 const writeConfig = require("./lib/write-dnsmasq-config");
 
@@ -12,12 +13,12 @@ const LEASES_UPDATED_TOPIC = "leases_updated";
 const pubsub = new PubSub();
 
 const renameDnsMasqId = lease => {
-  let result = ["timestamp", "mac", "ip", "host"].reduce(function(obj, key) {
+  let result = ["timestamp", "mac", "ip", "host"].reduce((obj, key) => {
     obj[key] = lease[key];
     return obj;
   }, {});
 
-  result.clientId = lease.id;
+  result.client = lease.id;
 
   return result;
 };
@@ -29,7 +30,15 @@ let leaseData = getLeases();
 
 let dateUpdated = new Date();
 
-let staticHosts = [];
+const staticHosts = [
+  {
+    client: "woot",
+    host: "fresh",
+    ip: "192.168.0.1",
+    leaseExpiry: "1d",
+    mac: "19:20:20:00:FF:1A"
+  }
+];
 let dhcpRange = {
   startIp: "",
   endIP: "",
@@ -48,7 +57,7 @@ fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
 });
 
 module.exports = {
-  GraphQLDateTime,
+  DateTime,
   Query: {
     leases: (parent, args) => {
       const keys = Object.keys(args);
@@ -63,15 +72,35 @@ module.exports = {
         return leaseData;
       }
     },
-    staticHosts: () => hostData,
+    staticHosts: () => staticHosts,
     dhcpRange: () => dhcpRange
   },
   Mutation: {
+    saveConfig: () => {
+      writeConfig({ staticHosts, dhcpRange, domain });
+      return true;
+    },
     addStaticHost: (parent, args) => {
       const host = { ...args };
       staticHosts.push(host);
       writeConfig({ staticHosts, dhcpRange, domain });
       return host;
+    },
+    deleteStaticHost: (parent, { uid }) => {
+      const idx = staticHosts.findIndex(host => {
+        const hash = createHash("sha1");
+        hash.update("StaticHost");
+        hash.update(host.ip);
+
+        return hash.digest("hex") === uid;
+      });
+      if (idx + 1) {
+        staticHosts.splice(idx, 1);
+        writeConfig({ staticHosts, dhcpRange, domain });
+        return true;
+      }
+
+      return false;
     },
     saveDHCPRange: (parent, args) => {
       dhcpRange = { ...args };

@@ -3,13 +3,7 @@ const fse = require("fs-extra");
 const Netmask = require("netmask").Netmask;
 const { exec } = require("child_process");
 
-const HOST_CONFIG_KEYS = [
-  "macAddress",
-  "clientId",
-  "ipAddress",
-  "hostName",
-  "leaseExpiry"
-];
+const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
 const { HOST_IP, ROUTER_IP, NODE_ENV } = process.env;
 

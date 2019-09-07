@@ -35,7 +35,7 @@ export function LeaseList({ leases }) {
             <TableCell>{lease.ip}</TableCell>
             <TableCell>{lease.host}</TableCell>
             <TableCell>{lease.mac}</TableCell>
-            <TableCell>{lease.clientId}</TableCell>
+            <TableCell>{lease.client}</TableCell>
             <TableCell>
               {formatDistance(new Date(lease.timestamp * 1000), Date.now())}
             </TableCell>

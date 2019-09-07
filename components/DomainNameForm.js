@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 
 export function DomainNameForm({ submitForm }) {
   const { values, handleChange, handleSubmit } = useForm(submitForm, {
-    domainName: ""
+    name: ""
   });
 
   const classes = useStyles();
@@ -42,7 +42,7 @@ export function DomainNameForm({ submitForm }) {
             id="domainName"
             label="Domain Name"
             className={classes.textField}
-            value={values.domainName}
+            value={values.name}
             onChange={handleChange}
             margin="normal"
             variant="outlined"
