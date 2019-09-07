@@ -1,7 +1,7 @@
 scalar GraphQLDateTime
 
 type Query {
-	leases: [DHCPLease!]!
+	leases(ip: String, mac: String, host: String): [DHCPLease!]!
 	staticHosts: [StaticHost!]!
 	dhcpRange: DHCPRange!
 }

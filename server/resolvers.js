@@ -50,7 +50,19 @@ fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
 module.exports = {
   GraphQLDateTime,
   Query: {
-    leases: () => leaseData,
+    leases: (parent, args) => {
+      const keys = Object.keys(args);
+
+      if (keys.length > 0) {
+        return leaseData.filter(l => {
+          let found = false;
+          keys.forEach(k => (found = found || l[k] === args[k]));
+          return found;
+        });
+      } else {
+        return leaseData;
+      }
+    },
     staticHosts: () => hostData,
     dhcpRange: () => dhcpRange
   },
