@@ -1,5 +1,8 @@
 import React from "react";
+import PropTypes from "prop-types";
+
 import MaskedInput from "react-text-mask";
+
 import { ipAddressPipe } from "../lib/ip-address-pipe";
 
 const maskedProps = {
@@ -21,3 +24,12 @@ export default function IPMaskedInput(props) {
     />
   );
 }
+
+IPMaskedInput.propTypes = {
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+  ])
+};

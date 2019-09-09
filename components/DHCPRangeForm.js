@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -7,6 +8,9 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
+
+import gql from "graphql-tag";
+import { useMutation, useQuery } from "@apollo/react-hooks";
 import { object, string } from "yup";
 
 import useForm from "../hooks/useForm";
@@ -31,22 +35,59 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const SAVE_RANGE_QUERY = gql`
+  mutation SaveDhcpRange(
+    $startIp: String!
+    $endIp: String!
+    $leaseExpiry: String!
+  ) {
+    saveDHCPRange(startIp: $startIp, endIp: $endIp, leaseExpiry: $leaseExpiry) {
+      startIp
+      endIp
+      leaseExpiry
+    }
+  }
+`;
+
+const GET_RANGE_QUERY = gql`
+  query DhcpRange {
+    dhcpRange {
+      startIp
+      endIp
+      leaseExpiry
+    }
+  }
+`;
+
 export function DHCPRangeForm({ submitForm }) {
+  const { loading, error, data: getData } = useQuery(GET_RANGE_QUERY);
+
+  const [saveDhcpRange, { data: saveData }] = useMutation(SAVE_RANGE_QUERY);
+
+  const defaultDhcpRange = {
+    startIp: "",
+    endIp: "",
+    leaseExpiry: "1d"
+  };
+
   const { values, handleChange, handleSubmit, hasError } = useForm(
-    submitForm,
-    {
-      startIp: "",
-      endIp: "",
-      leaseExpiry: "1d"
+    variables => {
+      saveDhcpRange({ variables });
+      submitForm && submitForm(variables);
     },
+    saveData?.dhcpRange || getData?.dhcpRange || defaultDhcpRange,
     object({
-      startIp: string().required("Start IP is Required"),
-      endIp: string().required("End IP is Required"),
+      startIp: string().required("Start Ip is Required"),
+      endIp: string().required("End Ip is Required"),
       leaseExpiry: string()
     })
   );
 
   const classes = useStyles();
+
+  if (loading) return <p>Loading</p>;
+
+  if (error) return <p>error</p>;
 
   return (
     <Card className={classes.card}>
@@ -59,7 +100,7 @@ export function DHCPRangeForm({ submitForm }) {
         <CardContent>
           <TextField
             id="startIp"
-            label="Start IP"
+            label="Start Ip"
             error={hasError("startIp")}
             className={classes.textField}
             value={values.startIp}
@@ -73,7 +114,7 @@ export function DHCPRangeForm({ submitForm }) {
 
           <TextField
             id="endIp"
-            label="End IP"
+            label="End Ip"
             error={hasError("endIp")}
             className={classes.textField}
             value={values.endIp}
@@ -121,3 +162,7 @@ export function DHCPRangeForm({ submitForm }) {
     </Card>
   );
 }
+
+DHCPRangeForm.propTypes = {
+  submitForm: PropTypes.func
+};

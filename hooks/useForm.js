@@ -22,12 +22,14 @@ function useForm(callback, defaultValues, schema) {
   async function catchErrors() {
     let caughtErrors = [];
     for (let [id] of Object.entries(values)) {
+      if (id === "__typename") continue; // apollo sends this key back
       try {
         await schema.validateAt(id, values);
       } catch ({ errors }) {
+        const msgs = Array.isArray(errors) ? errors[0] : errors;
         caughtErrors.push({
           id,
-          msgs: errors[0]
+          msgs
         });
       }
     }

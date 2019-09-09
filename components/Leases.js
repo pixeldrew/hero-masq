@@ -1,10 +1,12 @@
+import React from "react";
+
 import { useQuery } from "@apollo/react-hooks";
-import { LastUpdated } from "./LastUpdated";
-import { LeaseList } from "./LeaseList";
+import gql from "graphql-tag";
+
 import Paper from "@material-ui/core/Paper";
 
-import React from "react";
-import gql from "graphql-tag";
+import { LastUpdated } from "./LastUpdated";
+import { LeaseList } from "./LeaseList";
 
 const LEASES_QUERY = gql`
   {

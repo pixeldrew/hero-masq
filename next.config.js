@@ -23,11 +23,32 @@ env["GRAPHQL_URL"] = `${env["HOST_URL"]}${env["GRAPHQL_ENDPOINT"]}`;
 env["WEBSOCKET_PROTOCOL"] = websocketProtocol;
 env["WEBSOCKET_URL"] = `${websocketProtocol}${env["GRAPHQL_URL"]}`;
 env["GRAPHQL_URL"] = `${protocol}${env["GRAPHQL_URL"]}`;
+env["HOST_URL"] = `${protocol}${env["HOST_URL"]}`;
 
 const nextConfig = {
   dev,
   env: {
     ...env
+  },
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Note: we provide webpack above so you should not `require` it
+    // Perform customizations to webpack config
+    // Important: return the modified config
+
+    if (dev) {
+      config.module.rules.push({
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "eslint-loader",
+        options: {
+          // eslint options (if necessary)
+        }
+      });
+    }
+
+    // Example using webpack option
+    config.plugins.push(new webpack.IgnorePlugin(/\/__tests__\//));
+    return config;
   }
 };
 

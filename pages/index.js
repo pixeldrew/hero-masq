@@ -1,8 +1,9 @@
-import Head from "next/head";
-
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import PropTypes from "prop-types";
+
+import Head from "next/head";
 import { makeStyles } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 
 import { Leases } from "../components/Leases";
 import { DHCPRangeForm } from "../components/DHCPRangeForm";
@@ -59,6 +60,10 @@ Home.getInitialProps = ({ res, req }) => {
   }
 
   return {};
+};
+
+Home.propTypes = {
+  headers: PropTypes.object
 };
 
 export default Home;

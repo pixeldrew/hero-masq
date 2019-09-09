@@ -53,7 +53,7 @@ function getDHCPOptions() {
   return config;
 }
 
-function getDomain({ name }) {
+function getDomain({ name } = { name: null }) {
   let config = "";
   if (name) {
     config += `domain=${name}\n`;

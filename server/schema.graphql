@@ -56,9 +56,10 @@ type Mutation {
 }
 
 type Query {
-	dhcpRange: DHCPRange!
-	leases(host: String, ip: String, mac: String): [DHCPLease!]!
-	staticHosts: [StaticHost!]!
+	dhcpRange: DHCPRange
+	leases(host: String, ip: String, mac: String): [DHCPLease]!
+	staticHosts: [StaticHost]!
+	domain: Domain
 }
 
 "converts to dhcp-host= in dnsmaq.conf"

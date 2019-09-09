@@ -4,16 +4,25 @@
   "description": "dnsmasq config manager",
   "main": "index.js",
   "license": "MIT",
+  "repository": "https://github.com/pixeldrew/hero-masq.git",
   "scripts": {
-    "dev": "nodemon $NODE_DEBUG_OPTION server.js",
+    "dev": "nodemon server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
-    "test": "jest"
+    "test": "jest",
+    "clean": "rimraf .next/"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint ./ --fix",
+      "pretty-quick --staged",
+      "git add"
+    ]
   },
   "nodemonConfig": {
     "watch": [
@@ -55,6 +64,7 @@
     "graphql-iso-date": "^3.6.1",
     "graphql-subscriptions": "^1.1.0",
     "graphql-tag": "^2.10.1",
+    "graphql-tools": "^4.0.5",
     "graphql-validated-types": "^2.6.0",
     "helmet": "^3.20.1",
     "isomorphic-unfetch": "^3.0.0",
@@ -64,7 +74,6 @@
     "next": "^9.0.5",
     "next-offline": "^4.0.5",
     "next-routes": "^1.4.2",
-    "prop-types": "^15.7.2",
     "qs-stringify": "^1.1.0",
     "react": "^16.9.0",
     "react-apollo": "^2.5.8",
@@ -75,17 +84,26 @@
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
+    "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.2.0",
+    "eslint-loader": "^3.0.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
+    "lint-staged": "^9.2.5",
     "nodemon": "^1.19.2",
     "prettier": "1.18.2",
     "pretty-quick": "^1.11.1",
-    "react-test-renderer": "^16.9.0"
+    "prop-types": "^15.7.2",
+    "react-test-renderer": "^16.9.0",
+    "rimraf": "^3.0.0"
   }
 }

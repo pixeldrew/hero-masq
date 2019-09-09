@@ -1,12 +1,14 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
+
+import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-
 import TextField from "@material-ui/core/TextField";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+
 import useForm from "../hooks/useForm";
 
 const useStyles = makeStyles(theme => ({
@@ -58,7 +60,6 @@ export default function SignIn({ submitForm }) {
             label="Username"
             name="username"
             autoComplete="username"
-            autoFocus
             onChange={handleChange}
             value={values.username || ""}
           />
@@ -89,3 +90,7 @@ export default function SignIn({ submitForm }) {
     </Container>
   );
 }
+
+SignIn.propTypes = {
+  submitForm: PropTypes.func
+};

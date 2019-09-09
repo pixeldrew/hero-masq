@@ -1,7 +1,10 @@
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+
 import gql from "graphql-tag";
 import { useSubscription } from "@apollo/react-hooks";
-import React, { useState } from "react";
 import { formatDistance } from "date-fns";
+
 import { useInterval } from "../hooks/useInterval";
 
 const LEASES_UPDATED_SUBSCRIPTION = gql`
@@ -39,4 +42,8 @@ export const LastUpdated = ({ triggerRefetch }) => {
         `Last Updated ${formatDistance(lastUpdated, sinceLastUpdated)} ago`}
     </h4>
   );
+};
+
+LastUpdated.propTypes = {
+  triggerRefetch: PropTypes.func
 };

@@ -29,7 +29,7 @@ const apolloServer = new ApolloServer({
   resolvers,
   schemaDirectives,
   playground: NODE_ENV === "dev",
-  tracing: true,
+  tracing: NODE_ENV === "dev",
   cacheControl: true,
   engine: false,
   context: ({ req = {}, connection }) => {

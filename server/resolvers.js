@@ -39,14 +39,9 @@ const staticHosts = [
     mac: "19:20:20:00:FF:1A"
   }
 ];
-let dhcpRange = {
-  startIp: "",
-  endIP: "",
-  leaseExpiry: ""
-};
-let domain = {
-  name: ""
-};
+
+let dhcpRange;
+let domain;
 
 fs.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
   if (eventType === "change") {
@@ -73,7 +68,8 @@ module.exports = {
       }
     },
     staticHosts: () => staticHosts,
-    dhcpRange: () => dhcpRange
+    dhcpRange: () => dhcpRange,
+    domain: () => domain
   },
   Mutation: {
     saveConfig: () => {
