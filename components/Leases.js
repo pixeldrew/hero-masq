@@ -24,7 +24,7 @@ export function Leases() {
   const {
     loading,
     error,
-    data: { leases },
+    data: { leases } = { leases: [] },
     refetch
   } = useQuery(LEASES_QUERY);
 
