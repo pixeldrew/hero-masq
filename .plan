@@ -1,5 +1,4 @@
-write update staticHost mutation
-write component GQL for mutations
-write server mutation resolver for domainName and DHCPRange
+breakup graphql model into types with resolvers and schema
+write statichost upsert routine
 investigate graphql authentication and authorization using schema directives
 investigate writing an AST for dnsmasq config
