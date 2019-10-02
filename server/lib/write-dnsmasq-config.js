@@ -16,7 +16,9 @@ function getDhcpHost(host) {
 
 function getStaticHosts(staticHosts) {
   let config = "";
-  config += staticHosts.map(getDhcpHost).join("");
+  config += Object.values(staticHosts)
+    .map(getDhcpHost)
+    .join("");
   return config;
 }
 
@@ -74,39 +76,51 @@ function getConfPath() {
 /**
  * @return {string}
  */
-module.exports = function WriteConfig({ domain, dhcpRange, staticHosts }) {
-  let config = "",
-    confPath = getConfPath();
+module.exports = {
+  writeConfig: function WriteConfig({ domain, dhcpRange, staticHosts }) {
+    let config = "",
+      confPath = getConfPath();
 
-  config += getDomain(domain);
-  config += getDHCPRange(dhcpRange);
-  config += getDHCPOptions();
-  config += getStaticHosts(staticHosts);
+    config += getDomain(domain);
+    config += getDHCPRange(dhcpRange);
+    config += getDHCPOptions();
+    config += getStaticHosts(staticHosts);
 
-  fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
-    encoding: "utf8",
-    flag: "w"
-  });
-
-  fse.outputFileSync(
-    path.resolve(confPath, "hero-masq.json"),
-    JSON.stringify({ domain, dhcpRange, staticHosts }),
-    {
+    fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
       encoding: "utf8",
       flag: "w"
-    }
-  );
-
-  if (NODE_ENV === "production") {
-    exec('"/usr/bin/supervisord" restart dnsmasq', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
     });
-  }
 
-  return config;
+    fse.outputFileSync(
+      path.resolve(confPath, "hero-masq.json"),
+      JSON.stringify({ domain, dhcpRange, staticHosts }, null, 4),
+      {
+        encoding: "utf8",
+        flag: "w"
+      }
+    );
+
+    if (NODE_ENV === "production") {
+      exec(
+        '"/usr/bin/supervisord" restart dnsmasq',
+        (error, stdout, stderr) => {
+          if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+          }
+          console.log(`stdout: ${stdout}`);
+          console.log(`stderr: ${stderr}`);
+        }
+      );
+    }
+
+    return config;
+  },
+  getConfig: () => {
+    return JSON.parse(
+      fse.readFileSync(path.resolve(getConfPath(), "hero-masq.json"), {
+        encoding: "utf8"
+      })
+    );
+  }
 };

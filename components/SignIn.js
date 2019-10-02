@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignIn({ submitForm }) {
+export default function SignIn({ submitForm, loginStatus }) {
   const classes = useStyles();
 
   const { values, handleChange, handleSubmit } = useForm(submitForm);
@@ -85,6 +85,8 @@ export default function SignIn({ submitForm }) {
           >
             Sign In
           </Button>
+
+          {loginStatus}
         </form>
       </div>
     </Container>
@@ -92,5 +94,6 @@ export default function SignIn({ submitForm }) {
 }
 
 SignIn.propTypes = {
-  submitForm: PropTypes.func
+  submitForm: PropTypes.func.isRequired,
+  loginStatus: PropTypes.string
 };

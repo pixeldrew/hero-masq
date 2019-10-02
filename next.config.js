@@ -41,7 +41,8 @@ const nextConfig = {
         exclude: /node_modules/,
         loader: "eslint-loader",
         options: {
-          // eslint options (if necessary)
+          fix: true,
+          cache: true
         }
       });
     }

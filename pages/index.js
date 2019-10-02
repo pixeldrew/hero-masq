@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 
 import { Leases } from "../components/Leases";
 import { DHCPRangeForm } from "../components/DHCPRangeForm";
-import { StaticHostForm } from "../components/StaticHostForm";
+import { StaticHosts } from "../components/StaticHosts";
 import { DomainNameForm } from "../components/DomainNameForm";
 
 const useStyles = makeStyles(theme => ({
@@ -39,7 +39,7 @@ function Home({ headers }) {
           <DHCPRangeForm />
         </Grid>
         <Grid item xs={12}>
-          <StaticHostForm />
+          <StaticHosts />
         </Grid>
         <Grid item xs={12}>
           <Leases />

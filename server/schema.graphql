@@ -38,14 +38,9 @@ type LeasesUpdated {
 }
 
 type Mutation {
-	addStaticHost(
-		clientId: String
-		hostName: String
-		ipAddress: String!
-		leaseExpiry: String
-		macAddress: String!
-	): StaticHost!
-	deleteStaticHost(uid: String): Boolean
+	addStaticHost(staticHost: StaticHostInput!): StaticHost!
+	updateStaticHost(uid: String, staticHost: StaticHostInput!): StaticHost!
+	deleteStaticHost(uid: ID): Boolean
 	saveDHCPRange(
 		endIp: String!
 		leaseExpiry: String
@@ -85,3 +80,16 @@ type Subscription {
 scalar DateTime
 
 directive @uid(from: [String]) on OBJECT
+
+input StaticHostInput {
+	"client identifier"
+	client: String
+	"host name"
+	host: String
+	"ip address"
+	ip: String!
+	"lease expiration time"
+	leaseExpiry: String
+	"mac address"
+	mac: String
+}
