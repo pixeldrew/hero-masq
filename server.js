@@ -1,16 +1,21 @@
 // set env variables
 require("dotenv-defaults").config();
 
+// create server
+const { createServer } = require("http");
+
 const path = require("path");
+
 const next = require("next");
 const express = require("express");
-const { createServer } = require("http");
 const { ApolloServer, AuthenticationError } = require("apollo-server-express");
+
+// express middleware
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 
+// local middleware
 const authMiddleware = require("./server/middleware/authentication");
-
 const verifyToken = require("./server/lib/verify-token");
 
 const { PORT = 3000, NODE_ENV = "dev", USER_NAME } = process.env;
@@ -79,7 +84,6 @@ authMiddleware(app);
 // attach ApolloServer to expressApp by /graphql
 apolloServer.applyMiddleware({ app });
 
-// since this is applying to httpServer directly will the other middleware function?
 apolloServer.installSubscriptionHandlers(httpServer);
 
 // allow service-worker.js to be served by next
@@ -90,15 +94,16 @@ app.get("/service-worker.js", (req, res) =>
 // allow next to serve everything else
 app.get("*", nextRequestHandler);
 
+// unauthorized error handler
 app.use(function(err, req, res, next) {
   if (err.name === "UnauthorizedError") {
     res.status(401).send("invalid token...");
   }
 
   next(err);
-  //
 });
 
+// start next.js
 nextApp.prepare().then(() => {
   httpServer.listen(port, err => {
     if (err) throw err;
