@@ -89,16 +89,21 @@ module.exports.resolvers = initialData => {
       staticHosts: () => staticHosts.all
     },
     Mutation: {
-      addStaticHost: (parent, { staticHost }) => staticHosts.add(staticHost),
+      addStaticHost: (parent, { staticHost }) => {
+        const addedHost = staticHosts.add(staticHost);
+        pubsub.publish(CONFIG_STATIC_HOSTS_UPDATED, staticHosts.valueOf());
+        return addedHost;
+      },
       updateStaticHost: (parent, { uid, staticHost }) => {
         staticHosts.del(uid);
         const addedHost = staticHosts.add(staticHost);
-
-        pubsub.publish(CONFIG_STATIC_HOSTS_UPDATED, staticHosts);
-
+        pubsub.publish(CONFIG_STATIC_HOSTS_UPDATED, staticHosts.valueOf());
         return addedHost;
       },
-      deleteStaticHost: (parent, { uid }) => staticHosts.del(uid)
+      deleteStaticHost: (parent, { uid }) => {
+        staticHosts.del(uid);
+        pubsub.publish(CONFIG_STATIC_HOSTS_UPDATED, staticHosts.valueOf());
+      }
     }
   };
 };

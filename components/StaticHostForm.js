@@ -29,14 +29,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function StaticHostForm({ submitForm, currentHost, upsert }) {
+export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
   const { values, handleChange, handleSubmit } = useForm(
     submitForm,
     currentHost || {
-      macAddress: "",
-      ipAddress: "",
-      hostName: "",
-      clientId: "",
+      mac: "",
+      ip: "",
+      host: "",
+      client: "",
       leaseExpiry: LEASE_EXPIRATIONS[0].value
     }
   );
@@ -52,10 +52,10 @@ export function StaticHostForm({ submitForm, currentHost, upsert }) {
     >
       <CardContent>
         <TextField
-          id="ipAddress"
+          id="ip"
           label="IP Address"
           className={classes.textField}
-          value={values.ipAddress}
+          value={values.ip}
           onChange={handleChange}
           margin="normal"
           variant="outlined"
@@ -64,30 +64,30 @@ export function StaticHostForm({ submitForm, currentHost, upsert }) {
           }}
         />
         <TextField
-          id="hostName"
+          id="host"
           label="Host Name"
           className={classes.textField}
-          value={values.hostName}
+          value={values.host}
           onChange={handleChange}
           margin="normal"
           variant="outlined"
         />
 
         <TextField
-          id="macAddress"
+          id="mac"
           label="MAC Address"
           className={classes.textField}
-          value={values.macAddress}
+          value={values.mac}
           onChange={handleChange}
           margin="normal"
           variant="outlined"
         />
 
         <TextField
-          id="clientId"
+          id="client"
           label="Client ID"
           className={classes.textField}
-          value={values.clientId}
+          value={values.client}
           onChange={handleChange}
           margin="normal"
           variant="outlined"
@@ -116,9 +116,24 @@ export function StaticHostForm({ submitForm, currentHost, upsert }) {
         </TextField>
       </CardContent>
       <CardActions>
-        <Button variant="outlined" color="primary" className={classes.button}>
-          {upsert ? `Edit` : `Add`}
+        <Button
+          variant="outlined"
+          color="primary"
+          className={classes.button}
+          onClick={handleSubmit}
+        >
+          {edit ? `Save` : `Add`}
         </Button>
+        {edit && (
+          <Button
+            variant="outlined"
+            color="secondary"
+            className={classes.button}
+            onClick={cancelForm}
+          >
+            Cancel
+          </Button>
+        )}
       </CardActions>
     </form>
   );
@@ -126,6 +141,7 @@ export function StaticHostForm({ submitForm, currentHost, upsert }) {
 
 StaticHostForm.propTypes = {
   submitForm: PropTypes.func,
+  cancelForm: PropTypes.func,
   currentHost: PropTypes.object,
-  upsert: PropTypes.bool
+  edit: PropTypes.bool
 };

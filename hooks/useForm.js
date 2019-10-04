@@ -77,6 +77,10 @@ function useForm(callback, defaultValues, schema) {
     }
   }
 
+  function resetForm() {
+    setValues({ ...defaultValues });
+  }
+
   useEffect(() => {
     validateOnChange && validate();
   }, [values]);
@@ -86,6 +90,7 @@ function useForm(callback, defaultValues, schema) {
     handleSubmit,
     values,
     errors,
+    resetForm,
     hasError: id => errors.findIndex(e => e.id === id) >= 0
   };
 }

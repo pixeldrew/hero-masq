@@ -60,9 +60,9 @@ const GET_RANGE_QUERY = gql`
 `;
 
 export function DHCPRangeForm({ submitForm }) {
-  const { loading, error, data: getData } = useQuery(GET_RANGE_QUERY);
-
   const [saveDhcpRange, { data: saveData }] = useMutation(SAVE_RANGE_QUERY);
+
+  const { loading, error, data: getData } = useQuery(GET_RANGE_QUERY);
 
   const defaultDhcpRange = {
     startIp: "",

@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function StaticHostsList({ updateHost, staticHosts }) {
+export function StaticHostsList({ editHost, staticHosts }) {
   const classes = useStyles();
 
   if (staticHosts.length === 0) {
@@ -39,7 +39,7 @@ export function StaticHostsList({ updateHost, staticHosts }) {
       </TableHead>
       <TableBody>
         {staticHosts.map(host => (
-          <TableRow key={`staticHost-${host.ip}`}>
+          <TableRow key={`staticHost-${host.uid}`}>
             <TableCell>{host.ip}</TableCell>
             <TableCell>{host.host}</TableCell>
             <TableCell>{host.mac}</TableCell>
@@ -50,6 +50,9 @@ export function StaticHostsList({ updateHost, staticHosts }) {
                 variant="outlined"
                 color="primary"
                 className={classes.button}
+                onClick={() => {
+                  editHost(host);
+                }}
               >
                 Edit
               </Button>
@@ -62,6 +65,6 @@ export function StaticHostsList({ updateHost, staticHosts }) {
 }
 
 StaticHostsList.propTypes = {
-  updateHost: PropTypes.func,
+  editHost: PropTypes.func,
   staticHosts: PropTypes.array
 };

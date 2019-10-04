@@ -1,3 +1,6 @@
-write statichost upsert routine
+fix production build for first time ran (don't bomb out if file doesn't exist)
+write README.md to explain .env variables
+write some field validation for statichosts
+test docker configuration
 investigate graphql authentication and authorization using schema directives
 investigate writing an AST for dnsmasq config

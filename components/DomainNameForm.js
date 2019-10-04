@@ -49,9 +49,9 @@ export function DomainNameForm({ submitForm }) {
     name: ""
   };
 
-  const { loading, error, data: getData } = useQuery(GET_DOMAIN_NAME);
-
   const [saveDomainName, { data: saveData }] = useMutation(SAVE_DOMAIN_NAME);
+
+  const { loading, error, data: getData } = useQuery(GET_DOMAIN_NAME);
 
   const { values, handleChange, handleSubmit, hasError } = useForm(
     variables => {
