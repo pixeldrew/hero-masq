@@ -1,15 +1,13 @@
 const { gql } = require("apollo-server-express");
-const uid = require("graphql-directive-uid");
 
 const pubsub = require("../lib/pubsub");
 const { CONFIG_STATIC_HOSTS_UPDATED } = require("../lib/constants");
 const getStaticHostKey = require("./../lib/get-statichost-key");
 
 module.exports.typeDef = gql`
-  directive @uid(from: [String]) on OBJECT
-
   "converts to dhcp-host= in dnsmaq.conf"
-  type StaticHost @uid(from: ["ip"]) {
+  type StaticHost {
+    uid: ID!
     "client identifier"
     client: String
     "host name"
@@ -42,7 +40,7 @@ module.exports.typeDef = gql`
   extend type Mutation {
     addStaticHost(staticHost: StaticHostInput!): StaticHost!
     updateStaticHost(uid: String, staticHost: StaticHostInput!): StaticHost!
-    deleteStaticHost(uid: ID): Boolean
+    deleteStaticHost(uid: ID!): Boolean
   }
 `;
 
@@ -50,6 +48,7 @@ class StaticHosts {
   #hosts = {};
 
   constructor(initialHosts) {
+    Object.keys(initialHosts).forEach(k => (initialHosts[k].uid = k));
     this.#hosts = initialHosts;
   }
 
@@ -63,6 +62,7 @@ class StaticHosts {
 
   add(host) {
     const key = getStaticHostKey(host.ip);
+    host.uid = key;
     this.#hosts[key] = host;
     return host;
   }
@@ -77,7 +77,16 @@ class StaticHosts {
   }
 
   valueOf() {
-    return this.#hosts;
+    return Object.values(this.#hosts)
+      .map(v => {
+        // strip uid from staticHost
+        let { uid, ...staticHost } = v;
+        return [uid, staticHost];
+      })
+      .reduce((a, [uid, staticHost]) => {
+        a[uid] = staticHost;
+        return a;
+      }, {});
   }
 }
 
@@ -101,13 +110,14 @@ module.exports.resolvers = initialData => {
         return addedHost;
       },
       deleteStaticHost: (parent, { uid }) => {
-        staticHosts.del(uid);
-        pubsub.publish(CONFIG_STATIC_HOSTS_UPDATED, staticHosts.valueOf());
+        if (staticHosts.get(uid)) {
+          staticHosts.del(uid);
+          pubsub.publish(CONFIG_STATIC_HOSTS_UPDATED, staticHosts.valueOf());
+          return true;
+        }
+
+        return false;
       }
     }
   };
-};
-
-module.exports.directives = {
-  uid
 };

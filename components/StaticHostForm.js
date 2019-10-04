@@ -11,6 +11,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import useForm from "../hooks/useForm";
 import IPMaskedInput from "./IPMaskedInput";
 import { LEASE_EXPIRATIONS } from "../lib/constants";
+import { object, string } from "yup";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -30,15 +31,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
-  const { values, handleChange, handleSubmit } = useForm(
+  const { values, handleChange, handleSubmit, hasError } = useForm(
     submitForm,
     currentHost || {
+      uid: "",
       mac: "",
       ip: "",
       host: "",
       client: "",
       leaseExpiry: LEASE_EXPIRATIONS[0].value
-    }
+    },
+    object({
+      uid: string(),
+      ip: string().required("Ip is Required"),
+      mac: string(),
+      host: string(),
+      client: string(),
+      leaseExpiry: string()
+    })
   );
 
   const classes = useStyles();
@@ -54,6 +64,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
         <TextField
           id="ip"
           label="IP Address"
+          error={hasError("ip")}
           className={classes.textField}
           value={values.ip}
           onChange={handleChange}
@@ -66,6 +77,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
         <TextField
           id="host"
           label="Host Name"
+          error={hasError("host")}
           className={classes.textField}
           value={values.host}
           onChange={handleChange}
@@ -76,6 +88,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
         <TextField
           id="mac"
           label="MAC Address"
+          error={hasError("mac")}
           className={classes.textField}
           value={values.mac}
           onChange={handleChange}
@@ -86,6 +99,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
         <TextField
           id="client"
           label="Client ID"
+          error={hasError("client")}
           className={classes.textField}
           value={values.client}
           onChange={handleChange}
@@ -97,6 +111,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
           id="lease-expiry"
           select
           label="Expires"
+          error={hasError("leaseExpiry")}
           className={classes.textField}
           value={values.leaseExpiry}
           onChange={handleChange("leaseExpiry")}
@@ -120,7 +135,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
           variant="outlined"
           color="primary"
           className={classes.button}
-          onClick={handleSubmit}
+          type="submit"
         >
           {edit ? `Save` : `Add`}
         </Button>

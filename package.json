@@ -64,7 +64,6 @@
     "express-unless": "^0.5.0",
     "fs-extra": "^8.1.0",
     "graphql": "^14.5.8",
-    "graphql-directive-uid": "^0.2.0",
     "graphql-iso-date": "^3.6.1",
     "graphql-subscriptions": "^1.1.0",
     "graphql-tag": "^2.10.1",
@@ -85,6 +84,7 @@
     "react-dom": "^16.10.1",
     "react-text-mask": "^5.4.3",
     "subscriptions-transport-ws": "^0.9.16",
+    "winston": "^3.2.1",
     "yup": "^0.27.0"
   },
   "devDependencies": {
@@ -110,6 +110,7 @@
     "pretty-quick": "^1.11.1",
     "prop-types": "^15.7.2",
     "react-test-renderer": "^16.10.1",
+    "react-testing-library": "^8.0.1",
     "rimraf": "^3.0.0"
   }
 }

@@ -1,6 +1,8 @@
 // set env variables
 require("dotenv-defaults").config();
 
+const logger = require("./server/lib/logger");
+
 // create server
 const { createServer } = require("http");
 
@@ -107,11 +109,11 @@ app.use(function(err, req, res, next) {
 nextApp.prepare().then(() => {
   httpServer.listen(port, err => {
     if (err) throw err;
-    console.log(`Server Ready at http://localhost:${port}`);
-    console.log(
+    logger.info(`Server Ready at http://localhost:${port}`);
+    logger.info(
       `🚀 GraphQL Ready at http://localhost:${port}${apolloServer.graphqlPath}`
     );
-    console.log(
+    logger.info(
       `🚀 Subscriptions ready at ws://localhost:${port}${apolloServer.subscriptionsPath}`
     );
   });

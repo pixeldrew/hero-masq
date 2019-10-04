@@ -11,8 +11,7 @@ const {
 
 const {
   typeDef: staticHostsTypeDef,
-  resolvers: staticHostsResolver,
-  directives: staticHostsDirectives
+  resolvers: staticHostsResolver
 } = require("./graphql/static-hosts");
 
 const {
@@ -72,6 +71,5 @@ module.exports = {
     dhcpRangeResolver(config.dhcpRange),
     domainResolver(config.domain),
     staticHostsResolver(config.staticHosts)
-  ),
-  schemaDirectives: merge(staticHostsDirectives)
+  )
 };

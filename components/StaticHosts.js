@@ -3,10 +3,18 @@ import React, { useState } from "react";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
+import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 
 import { StaticHostForm } from "./StaticHostForm";
 import { StaticHostsList } from "./StaticHostsList";
+
+const useStyles = makeStyles(theme => ({
+  h1: {
+    padding: "16px 25px 0",
+    margin: 0
+  }
+}));
 
 const STATIC_HOSTS_QUERY = gql`
   {
@@ -47,12 +55,20 @@ const UPDATE_STATIC_HOST = gql`
   }
 `;
 
+const DELETE_STATIC_HOST = gql`
+  mutation DeleteStaticHost($uid: ID!) {
+    deleteStaticHost(uid: $uid)
+  }
+`;
+
 export function StaticHosts() {
   const [edit, setEdit] = useState(false);
   const [currentHost, setCurrentHost] = useState(null);
 
   const [addStaticHost] = useMutation(ADD_STATIC_HOST);
   const [updateStaticHost] = useMutation(UPDATE_STATIC_HOST);
+
+  const classes = useStyles();
 
   const {
     loading,
@@ -81,6 +97,7 @@ export function StaticHosts() {
 
   return (
     <Paper>
+      <h2 className={classes.h1}>Static Hosts</h2>
       {edit ? (
         <StaticHostForm
           edit={edit}
@@ -97,10 +114,10 @@ export function StaticHosts() {
       )}
       <StaticHostsList
         staticHosts={staticHosts}
-        editHost={editHost => {
-          let { __typename, ...host } = editHost;
+        editHost={host => {
+          let { __typename, ...newHost } = host;
           setEdit(true);
-          setCurrentHost(host);
+          setCurrentHost(newHost);
         }}
       />
     </Paper>

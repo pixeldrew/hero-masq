@@ -2,6 +2,7 @@ const path = require("path");
 const fse = require("fs-extra");
 const Netmask = require("netmask").Netmask;
 const { exec } = require("child_process");
+const logger = require("./logger");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
@@ -86,30 +87,34 @@ module.exports = {
     config += getDHCPOptions();
     config += getStaticHosts(staticHosts);
 
-    fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
-      encoding: "utf8",
-      flag: "w"
-    });
-
-    fse.outputFileSync(
-      path.resolve(confPath, "hero-masq.json"),
-      JSON.stringify({ domain, dhcpRange, staticHosts }, null, 4),
-      {
+    try {
+      fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
         encoding: "utf8",
         flag: "w"
-      }
-    );
+      });
+
+      fse.outputFileSync(
+        path.resolve(confPath, "hero-masq.json"),
+        JSON.stringify({ domain, dhcpRange, staticHosts }, null, 4),
+        {
+          encoding: "utf8",
+          flag: "w"
+        }
+      );
+    } catch (e) {
+      logger.warn("unable to write config");
+    }
 
     if (NODE_ENV === "production") {
       exec(
         '"/usr/bin/supervisord" restart dnsmasq',
         (error, stdout, stderr) => {
           if (error) {
-            console.error(`exec error: ${error}`);
+            logger.error(`exec error: ${error}`);
             return;
           }
-          console.log(`stdout: ${stdout}`);
-          console.log(`stderr: ${stderr}`);
+          logger.info(`stdout: ${stdout}`);
+          logger.warn(`stderr: ${stderr}`);
         }
       );
     }
@@ -117,10 +122,15 @@ module.exports = {
     return config;
   },
   getConfig: () => {
-    return JSON.parse(
-      fse.readFileSync(path.resolve(getConfPath(), "hero-masq.json"), {
-        encoding: "utf8"
-      })
-    );
+    try {
+      return JSON.parse(
+        fse.readFileSync(path.resolve(getConfPath(), "hero-masq.json"), {
+          encoding: "utf8"
+        })
+      );
+    } catch (e) {
+      logger.warn("unable to open config");
+      return { domain: null, staticHosts: {}, dhcpRange: null };
+    }
   }
 };
