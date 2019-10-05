@@ -9,6 +9,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 
+import { DeleteDialog } from "./DeleteDialog";
+
 const useStyles = makeStyles(theme => ({
   table: {
     minWidth: 650
@@ -18,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function StaticHostsList({ editHost, staticHosts }) {
+export function StaticHostsList({ editHost, deleteHost, staticHosts }) {
   const classes = useStyles();
 
   if (staticHosts.length === 0) {
@@ -39,7 +41,7 @@ export function StaticHostsList({ editHost, staticHosts }) {
       </TableHead>
       <TableBody>
         {staticHosts.map(host => (
-          <TableRow key={`staticHost-${host.uid}`}>
+          <TableRow key={`staticHost-${host.id}`}>
             <TableCell>{host.ip}</TableCell>
             <TableCell>{host.host}</TableCell>
             <TableCell>{host.mac}</TableCell>
@@ -56,6 +58,11 @@ export function StaticHostsList({ editHost, staticHosts }) {
               >
                 Edit
               </Button>
+              <DeleteDialog
+                okHandler={() => {
+                  deleteHost(host.id);
+                }}
+              />
             </TableCell>
           </TableRow>
         ))}
@@ -66,5 +73,6 @@ export function StaticHostsList({ editHost, staticHosts }) {
 
 StaticHostsList.propTypes = {
   editHost: PropTypes.func,
+  deleteHost: PropTypes.func,
   staticHosts: PropTypes.array
 };

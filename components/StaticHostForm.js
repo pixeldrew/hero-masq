@@ -34,7 +34,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
   const { values, handleChange, handleSubmit, hasError } = useForm(
     submitForm,
     currentHost || {
-      uid: "",
+      id: "",
       mac: "",
       ip: "",
       host: "",
@@ -42,7 +42,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
       leaseExpiry: LEASE_EXPIRATIONS[0].value
     },
     object({
-      uid: string(),
+      id: string(),
       ip: string().required("Ip is Required"),
       mac: string(),
       host: string(),

@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 const STATIC_HOSTS_QUERY = gql`
   {
     staticHosts {
-      uid
+      id
       mac
       ip
       client
@@ -32,7 +32,7 @@ const STATIC_HOSTS_QUERY = gql`
 const ADD_STATIC_HOST = gql`
   mutation AddStaticHost($staticHost: StaticHostInput!) {
     addStaticHost(staticHost: $staticHost) {
-      uid
+      id
       client
       host
       ip
@@ -43,9 +43,9 @@ const ADD_STATIC_HOST = gql`
 `;
 
 const UPDATE_STATIC_HOST = gql`
-  mutation UpdateStaticHost($uid: String!, $staticHost: StaticHostInput!) {
-    updateStaticHost(uid: $uid, staticHost: $staticHost) {
-      uid
+  mutation UpdateStaticHost($id: ID!, $staticHost: StaticHostInput!) {
+    updateStaticHost(id: $id, staticHost: $staticHost) {
+      id
       client
       host
       ip
@@ -56,8 +56,8 @@ const UPDATE_STATIC_HOST = gql`
 `;
 
 const DELETE_STATIC_HOST = gql`
-  mutation DeleteStaticHost($uid: ID!) {
-    deleteStaticHost(uid: $uid)
+  mutation DeleteStaticHost($id: ID!) {
+    deleteStaticHost(id: $id)
   }
 `;
 
@@ -65,26 +65,47 @@ export function StaticHosts() {
   const [edit, setEdit] = useState(false);
   const [currentHost, setCurrentHost] = useState(null);
 
-  const [addStaticHost] = useMutation(ADD_STATIC_HOST);
+  const { loading, data: { staticHosts } = { staticHosts: [] } } = useQuery(
+    STATIC_HOSTS_QUERY
+  );
+
+  const [addStaticHost] = useMutation(ADD_STATIC_HOST, {
+    update(
+      cache,
+      {
+        data: { addStaticHost }
+      }
+    ) {
+      const { staticHosts } = cache.readQuery({ query: STATIC_HOSTS_QUERY });
+      cache.writeQuery({
+        query: STATIC_HOSTS_QUERY,
+        data: { staticHosts: [...staticHosts, addStaticHost] }
+      });
+    }
+  });
   const [updateStaticHost] = useMutation(UPDATE_STATIC_HOST);
-
-  const classes = useStyles();
-
-  const {
-    loading,
-    data: { staticHosts } = { staticHosts: [] },
-    refetch
-  } = useQuery(STATIC_HOSTS_QUERY);
-
-  if (loading) {
-    return <p>Loading</p>;
-  }
+  const [deleteStaticHost] = useMutation(DELETE_STATIC_HOST, {
+    update(
+      cache,
+      {
+        data: { deleteStaticHost }
+      }
+    ) {
+      const { staticHosts } = cache.readQuery({ query: STATIC_HOSTS_QUERY });
+      cache.writeQuery({
+        query: STATIC_HOSTS_QUERY,
+        data: {
+          staticHosts: staticHosts.filter(x => x.id !== deleteStaticHost)
+        }
+      });
+    }
+  });
 
   const upsertHost = submitValues => {
-    let { uid, ...variables } = submitValues;
+    const { id, ...variables } = submitValues;
     if (edit) {
       updateStaticHost({
-        variables: { uid, staticHost: { ...variables } }
+        variables: { id, staticHost: { ...variables } }
       });
     } else {
       addStaticHost({ variables: { staticHost: { ...variables } } });
@@ -92,8 +113,17 @@ export function StaticHosts() {
 
     setEdit(false);
     setCurrentHost(null);
-    refetch();
   };
+
+  const delHost = id => {
+    deleteStaticHost({ variables: { id } });
+  };
+
+  if (loading) {
+    return <p>Loading</p>;
+  }
+
+  const classes = useStyles();
 
   return (
     <Paper>
@@ -103,7 +133,7 @@ export function StaticHosts() {
           edit={edit}
           currentHost={currentHost}
           submitForm={upsertHost}
-          key={`edit-${currentHost.uid}`}
+          key={`edit-${currentHost.id}`}
           cancelForm={() => {
             setEdit(false);
             setCurrentHost(null);
@@ -114,6 +144,7 @@ export function StaticHosts() {
       )}
       <StaticHostsList
         staticHosts={staticHosts}
+        deleteHost={delHost}
         editHost={host => {
           let { __typename, ...newHost } = host;
           setEdit(true);

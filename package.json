@@ -9,7 +9,7 @@
     "dev": "nodemon server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
-    "test": "jest",
+    "test": "NODE_ENV=test jest",
     "clean": "rimraf .next/"
   },
   "engines": {

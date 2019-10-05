@@ -17,9 +17,7 @@ function getDhcpHost(host) {
 
 function getStaticHosts(staticHosts) {
   let config = "";
-  config += Object.values(staticHosts)
-    .map(getDhcpHost)
-    .join("");
+  config += staticHosts.map(getDhcpHost).join("");
   return config;
 }
 
@@ -87,22 +85,24 @@ module.exports = {
     config += getDHCPOptions();
     config += getStaticHosts(staticHosts);
 
-    try {
-      fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
-        encoding: "utf8",
-        flag: "w"
-      });
-
-      fse.outputFileSync(
-        path.resolve(confPath, "hero-masq.json"),
-        JSON.stringify({ domain, dhcpRange, staticHosts }, null, 4),
-        {
+    if (NODE_ENV !== "test") {
+      try {
+        fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
           encoding: "utf8",
           flag: "w"
-        }
-      );
-    } catch (e) {
-      logger.warn("unable to write config");
+        });
+
+        fse.outputFileSync(
+          path.resolve(confPath, "hero-masq.json"),
+          JSON.stringify({ domain, dhcpRange, staticHosts }, null, 4),
+          {
+            encoding: "utf8",
+            flag: "w"
+          }
+        );
+      } catch (e) {
+        logger.warn("unable to write config");
+      }
     }
 
     if (NODE_ENV === "production") {
@@ -130,7 +130,11 @@ module.exports = {
       );
     } catch (e) {
       logger.warn("unable to open config");
-      return { domain: null, staticHosts: {}, dhcpRange: null };
+      return {
+        domain: { name: "" },
+        staticHosts: [],
+        dhcpRange: { startIp: "", endIp: "", leaseExpiry: "1d" }
+      };
     }
   }
 };
