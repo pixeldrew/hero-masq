@@ -16,7 +16,7 @@ import { object, string } from "yup";
 import useForm from "../hooks/useForm";
 
 import IPMaskedInput from "./IPMaskedInput";
-import { LEASE_EXPIRATIONS } from "../lib/constants";
+import { IP_REGEX, LEASE_EXPIRATIONS } from "../lib/constants";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -70,15 +70,17 @@ export function DHCPRangeForm({ submitForm }) {
     leaseExpiry: "1d"
   };
 
-  const { values, handleChange, handleSubmit, hasError } = useForm(
+  const { values, handleChange, handleSubmit, hasError, disable } = useForm(
     variables => {
       saveDhcpRange({ variables });
       submitForm && submitForm(variables);
     },
     saveData?.dhcpRange || getData?.dhcpRange || defaultDhcpRange,
     object({
-      startIp: string().required("Start Ip is Required"),
-      endIp: string().required("End Ip is Required"),
+      startIp: string().matches(IP_REGEX, {
+        message: "IP Address Required"
+      }),
+      endIp: string().matches(IP_REGEX, { message: "IP Address Required" }),
       leaseExpiry: string()
     })
   );
@@ -154,6 +156,7 @@ export function DHCPRangeForm({ submitForm }) {
             className={classes.button}
             type="submit"
             variant="outlined"
+            disabled={disable}
           >
             Save
           </Button>

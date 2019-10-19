@@ -1,97 +1,140 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 
-function useForm(callback, defaultValues, schema) {
-  const [values, setValues] = useState({ ...defaultValues });
-  const [errors, setErrors] = useState([]);
-  const [validateOnChange, setValidateOnChange] = useState(false);
-
-  async function validate() {
-    if (schema) {
-      const errors = await catchErrors();
-      if (errors.length > 0) {
-        setErrors([...errors]);
-        return false;
-      }
-
-      setErrors([]);
+const validateById = (id, value, values, schema, setErrors) => {
+  if (schema) {
+    try {
+      schema.validateSyncAt(id, { ...values, [id]: value });
+      setErrors(oldErrors => [...oldErrors.filter(e => e.id !== id)]);
+    } catch ({ errors }) {
+      const msgs = Array.isArray(errors) ? errors[0] : errors;
+      setErrors(oldErrors => [
+        ...oldErrors.filter(e => e.id !== id),
+        { id, msgs }
+      ]);
     }
-
-    return true;
   }
+};
 
-  async function catchErrors() {
-    let caughtErrors = [];
-    for (let [id] of Object.entries(values)) {
-      if (id === "__typename") continue; // apollo sends this key back
+const validateDefault = (defaultValues, schema) => {
+  let foundErrors = [];
+  if (schema) {
+    Object.entries(defaultValues).forEach(([id, value]) => {
       try {
-        await schema.validateAt(id, values);
+        if (id.indexOf("__") === 0) return;
+        schema.validateSyncAt(id, defaultValues);
       } catch ({ errors }) {
         const msgs = Array.isArray(errors) ? errors[0] : errors;
-        caughtErrors.push({
-          id,
-          msgs
-        });
+        foundErrors.push({ id, msgs });
       }
-    }
-
-    return caughtErrors;
+    });
   }
+  return foundErrors;
+};
 
-  async function handleSubmit(event) {
-    if (event) event.preventDefault();
+const validateForm = errors => errors.length > 0;
 
-    if (schema) {
-      setValidateOnChange(true);
-      if (await validate()) {
-        callback(values);
-      }
-    } else {
-      callback(values);
-    }
-  }
+function useForm(callback, defaultValues, schema) {
+  const [values, setValues] = useState(defaultValues);
+  const [errors, setErrors] = useState(validateDefault(defaultValues, schema));
+  const [disable, setDisable] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
 
-  function handleChange(name) {
-    if (name.target) {
-      name.persist();
-      const key = name.target.name || name.target.id;
+  const validateValue = useCallback(
+    (id, value, values) => {
+      validateById(id, value, values, schema, setErrors);
+    },
+    [schema]
+  );
 
-      if (!key) {
+  /**
+   * updates entry in value collection by id and validates
+   */
+  const changeValue = useCallback(
+    function(id, value) {
+      if (!id) {
         throw new Error(
           "no name provided to handleChange. input must have either a name or an id"
         );
       }
 
-      setValues(values => ({
-        ...values,
-        [key]: name.target.value
-      }));
-    } else {
-      return event => {
+      setValues(oldValues => {
+        validateValue(id, value, oldValues);
+        return {
+          ...oldValues,
+          [id]: value
+        };
+      });
+    },
+    [validateValue]
+  );
+
+  /**
+   * handles input fields with an explicit name or uses the name attribute on the target
+   */
+  const handleChange = useCallback(
+    function(event) {
+      if (typeof event === "object") {
         event.persist();
+        const id = event.target.name || event.target.id;
+        const value = event.target.value;
+        changeValue(id, value);
+      } else {
+        return function(e) {
+          e.persist();
+          const id = event;
+          const { value } = e.target;
+          changeValue(id, value);
+        };
+      }
+    },
+    [changeValue]
+  );
 
-        setValues(values => ({
-          ...values,
-          [name]: event.target.value
-        }));
-      };
-    }
-  }
+  const hasError = useCallback(
+    id => showErrors && errors.findIndex(e => e.id === id) >= 0,
+    [errors, showErrors]
+  );
 
-  function resetForm() {
-    setValues({ ...defaultValues });
-  }
+  const handleSubmit = useCallback(
+    function(event) {
+      if (event) event.preventDefault();
 
+      if (schema) {
+        setShowErrors(true);
+        if (!validateForm(errors) && !disable) {
+          callback(values);
+        }
+      } else {
+        callback(values);
+      }
+    },
+    [callback, disable, errors, schema, values]
+  );
+
+  const resetForm = useCallback(
+    function() {
+      setValues({ ...defaultValues });
+      setErrors(validateDefault(defaultValues, schema));
+      setShowErrors(false);
+    },
+    [defaultValues, schema]
+  );
+
+  /**
+   * sets disable if form has an errors
+   */
   useEffect(() => {
-    validateOnChange && validate();
-  }, [values]);
+    setDisable(validateForm(errors));
+  }, [errors]);
 
   return {
     handleChange,
     handleSubmit,
     values,
     errors,
-    resetForm,
-    hasError: id => errors.findIndex(e => e.id === id) >= 0
+    hasError,
+    disable,
+    resetForm
   };
 }
 

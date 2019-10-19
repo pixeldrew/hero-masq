@@ -10,7 +10,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 import useForm from "../hooks/useForm";
 import IPMaskedInput from "./IPMaskedInput";
-import { LEASE_EXPIRATIONS } from "../lib/constants";
+import { LEASE_EXPIRATIONS, IP_REGEX } from "../lib/constants";
 import { object, string } from "yup";
 
 const useStyles = makeStyles(theme => ({
@@ -31,8 +31,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
-  const { values, handleChange, handleSubmit, hasError } = useForm(
-    submitForm,
+  const { values, handleChange, handleSubmit, hasError, resetForm } = useForm(
+    values => {
+      submitForm(values);
+      resetForm();
+    },
     currentHost || {
       id: "",
       mac: "",
@@ -43,7 +46,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
     },
     object({
       id: string(),
-      ip: string().required("Ip is Required"),
+      ip: string().matches(IP_REGEX, { message: "IP Address Required" }),
       mac: string(),
       host: string(),
       client: string(),

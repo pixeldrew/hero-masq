@@ -53,7 +53,7 @@ export function DomainNameForm({ submitForm }) {
 
   const { loading, error, data: getData } = useQuery(GET_DOMAIN_NAME);
 
-  const { values, handleChange, handleSubmit, hasError } = useForm(
+  const { values, handleChange, handleSubmit, hasError, disable } = useForm(
     variables => {
       saveDomainName({ variables });
       submitForm && submitForm();
@@ -85,7 +85,7 @@ export function DomainNameForm({ submitForm }) {
             className={classes.textField}
             value={values.name}
             onChange={handleChange}
-            error={hasError("domain")}
+            error={hasError("name")}
             margin="normal"
             variant="outlined"
           />
@@ -96,6 +96,7 @@ export function DomainNameForm({ submitForm }) {
             variant="outlined"
             className={classes.button}
             type="submit"
+            disabled={disable}
           >
             Save
           </Button>

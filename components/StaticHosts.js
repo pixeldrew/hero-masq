@@ -119,11 +119,11 @@ export function StaticHosts() {
     deleteStaticHost({ variables: { id } });
   };
 
+  const classes = useStyles();
+
   if (loading) {
     return <p>Loading</p>;
   }
-
-  const classes = useStyles();
 
   return (
     <Paper>
