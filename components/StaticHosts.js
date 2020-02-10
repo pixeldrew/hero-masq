@@ -70,12 +70,7 @@ export function StaticHosts() {
   );
 
   const [addStaticHost] = useMutation(ADD_STATIC_HOST, {
-    update(
-      cache,
-      {
-        data: { addStaticHost }
-      }
-    ) {
+    update(cache, { data: { addStaticHost } }) {
       const { staticHosts } = cache.readQuery({ query: STATIC_HOSTS_QUERY });
       cache.writeQuery({
         query: STATIC_HOSTS_QUERY,
@@ -85,12 +80,7 @@ export function StaticHosts() {
   });
   const [updateStaticHost] = useMutation(UPDATE_STATIC_HOST);
   const [deleteStaticHost] = useMutation(DELETE_STATIC_HOST, {
-    update(
-      cache,
-      {
-        data: { deleteStaticHost }
-      }
-    ) {
+    update(cache, { data: { deleteStaticHost } }) {
       const { staticHosts } = cache.readQuery({ query: STATIC_HOSTS_QUERY });
       cache.writeQuery({
         query: STATIC_HOSTS_QUERY,

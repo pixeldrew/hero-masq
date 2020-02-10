@@ -121,7 +121,7 @@ function useForm(callback, defaultValues, schema) {
   );
 
   /**
-   * sets disable if form has an errors
+   * sets disable if form has errors
    */
   useEffect(() => {
     setDisable(validateForm(errors));

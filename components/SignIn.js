@@ -39,7 +39,10 @@ const useStyles = makeStyles(theme => ({
 export default function SignIn({ submitForm, loginStatus }) {
   const classes = useStyles();
 
-  const { values, handleChange, handleSubmit } = useForm(submitForm);
+  const { values, handleChange, handleSubmit } = useForm(submitForm, {
+    username: "",
+    password: ""
+  });
 
   return (
     <Container component="main" maxWidth="xs">

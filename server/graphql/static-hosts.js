@@ -48,6 +48,7 @@ module.exports.typeDef = gql`
 class StaticHosts {
   #hosts = [];
   #keySeed = 0;
+  #currentIdx = 0;
 
   constructor(initialHosts) {
     this.#hosts = initialHosts.map((k, i) => ({
@@ -55,6 +56,14 @@ class StaticHosts {
       id: getStaticHostKey(i)
     }));
     this.#keySeed = this.#hosts.length;
+  }
+
+  [Symbol.iterator]() {
+    return this.#hosts.values();
+  }
+
+  return() {
+    this.#currentIdx = 0;
   }
 
   get(key) {
@@ -67,10 +76,10 @@ class StaticHosts {
   }
 
   add(host) {
-    const key = getStaticHostKey(this.#keySeed++);
-    host.id = key;
-    this.#hosts.push(host);
-    return host;
+    const id = getStaticHostKey(this.#keySeed++);
+    const addedHost = { ...host, id };
+    this.#hosts.push(addedHost);
+    return addedHost;
   }
 
   del(key) {

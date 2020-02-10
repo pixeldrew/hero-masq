@@ -8,25 +8,19 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
+import useModal from "../hooks/useModal";
+
 export function DeleteDialog({ okHandler }) {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const { onClickOpen, modalOpen, onClickClose } = useModal();
 
   return (
     <>
-      <Button variant="outlined" color="secondary" onClick={handleClickOpen}>
+      <Button variant="outlined" color="secondary" onClick={onClickOpen}>
         Delete
       </Button>
       <Dialog
-        open={open}
-        onClose={handleClose}
+        open={modalOpen}
+        onClose={onClickClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -37,12 +31,12 @@ export function DeleteDialog({ okHandler }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={onClickClose} color="primary">
             Cancel
           </Button>
           <Button
             onClick={() => {
-              handleClose();
+              onClickClose();
               okHandler();
             }}
             color="primary"
