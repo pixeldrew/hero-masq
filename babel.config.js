@@ -1,6 +1,6 @@
 const config = {
   presets: ["next/babel"],
-  plugins: ["@babel/plugin-proposal-optional-chaining"]
+  plugins: []
 };
 
 config.env = {
