@@ -8,6 +8,8 @@ RUN apk update \
 	&& apk --no-cache add dnsmasq supervisor
 #configure dnsmasq
 RUN mkdir -p /etc/default/
+RUN mkdir -p /var/lib/dnsmasqd
+RUN mkdir -p /var/log/supervisor/
 RUN echo -e "ENABLED=1\nIGNORE_RESOLVCONF=yes" > /etc/default/dnsmasq
 
 COPY package*.json ./

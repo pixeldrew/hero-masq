@@ -1,6 +1,7 @@
 const { gql } = require("apollo-server-express");
 const fse = require("fs-extra");
 const dnsmasqLeases = require("dnsmasq-leases");
+const logger = require("../lib/logger");
 
 const pubsub = require("../lib/pubsub");
 const { LEASE_FILE, LEASES_UPDATED_TOPIC } = require("./../lib/constants");
@@ -50,8 +51,16 @@ const renameDnsMasqId = lease => {
   return result;
 };
 
-const getLeases = () =>
-  dnsmasqLeases(fse.readFileSync(LEASE_FILE, "utf8")).map(renameDnsMasqId);
+const getLeases = () => {
+  let leases = "";
+  try {
+    leases = fse.readFileSync(LEASE_FILE, "utf8");
+  } catch {
+    logger.warn("couldn't open lease file");
+  }
+
+  return dnsmasqLeases(leases).map(renameDnsMasqId);
+};
 
 module.exports.resolvers = () => {
   let leases = getLeases();

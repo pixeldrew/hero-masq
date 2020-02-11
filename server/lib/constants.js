@@ -2,9 +2,9 @@
 // nothing secret should ever be in here
 
 module.exports.LEASE_FILE =
-  process.env.NODE !== "production"
+  process.env.NODE_ENV !== "production"
     ? __dirname + "/__tests__/data/dnsmasq.leases"
-    : "/var/lib/dnsmasq/dnsmasq.leases";
+    : "/var/lib/dnsmasqd/dnsmasq.leases";
 
 module.exports.LEASES_UPDATED_TOPIC = "leases_updated";
 
