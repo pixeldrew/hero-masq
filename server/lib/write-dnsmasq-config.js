@@ -23,7 +23,7 @@ function getDhcpHost(host) {
     hostConfig += `ptr-record=${host.ip
       .split(".")
       .reverse()
-      .join(".")}.in-addr.arpa,${host.host}`;
+      .join(".")}.in-addr.arpa,${host.host}\n`;
   } else {
     hostConfig = `dhcp-host=${configKeys
       .map(k => host[k] || "")
@@ -60,7 +60,7 @@ function getDHCPRange(dhcpRange) {
   return config;
 }
 
-function getDHCPOptions(domain) {
+function getDHCPOptions({ name }) {
   let config = "";
 
   if (HOST_IP) {
@@ -71,7 +71,7 @@ function getDHCPOptions(domain) {
     config += `dhcp-option=option:router,${ROUTER_IP}\n`;
   }
 
-  config += `dhcp-option=domain-search,${domain}`;
+  config += `dhcp-option=option:domain-search,${name}\n`;
 
   return config;
 }
@@ -123,7 +123,7 @@ module.exports = {
           }
         );
       } catch (e) {
-        logger.warn("unable to write config");
+        logger.warn(`unable to write config, ${confPath}`);
       }
     }
 
