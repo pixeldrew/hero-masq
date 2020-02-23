@@ -6,13 +6,32 @@ const logger = require("./logger");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
-const { HOST_IP, ROUTER_IP, NODE_ENV } = process.env;
+const {
+  HOST_IP,
+  ROUTER_IP,
+  NODE_ENV,
+  CONF_LOCATION,
+  SERVICE_MANAGER
+} = process.env;
 
 function getDhcpHost(host) {
-  const hostConfig = HOST_CONFIG_KEYS.map(k => host[k] || "")
-    .filter(x => x)
-    .join(",");
-  return `dhcp-host=${hostConfig}\n`;
+  let configKeys = [...HOST_CONFIG_KEYS];
+  let hostConfig;
+
+  if (!host.mac && !host.client) {
+    hostConfig = `address=/${host.host}/${host.ip}\n`;
+    hostConfig += `ptr-record=${host.ip
+      .split(".")
+      .reverse()
+      .join(".")}.in-addr.arpa,${host.host}`;
+  } else {
+    hostConfig = `dhcp-host=${configKeys
+      .map(k => host[k] || "")
+      .filter(x => x)
+      .join(",")}\n`;
+  }
+
+  return hostConfig;
 }
 
 function getStaticHosts(staticHosts) {
@@ -41,7 +60,7 @@ function getDHCPRange(dhcpRange) {
   return config;
 }
 
-function getDHCPOptions() {
+function getDHCPOptions(domain) {
   let config = "";
 
   if (HOST_IP) {
@@ -51,6 +70,9 @@ function getDHCPOptions() {
   if (ROUTER_IP) {
     config += `dhcp-option=option:router,${ROUTER_IP}\n`;
   }
+
+  config += `dhcp-option=domain-search,${domain}`;
+
   return config;
 }
 
@@ -65,7 +87,7 @@ function getDomain({ name } = { name: null }) {
 function getConfPath() {
   let confPath = "";
   if (NODE_ENV === "production") {
-    confPath = path.resolve("/etc/dnsmasq.d/");
+    confPath = path.resolve(CONF_LOCATION);
   } else {
     confPath = path.resolve(__dirname, "../../dnsmasq/conf");
   }
@@ -82,7 +104,7 @@ module.exports = {
 
     config += getDomain(domain);
     config += getDHCPRange(dhcpRange);
-    config += getDHCPOptions();
+    config += getDHCPOptions(domain);
     config += getStaticHosts(staticHosts);
 
     if (NODE_ENV !== "test") {
@@ -106,17 +128,14 @@ module.exports = {
     }
 
     if (NODE_ENV === "production") {
-      exec(
-        '"/usr/bin/supervisord" restart dnsmasq',
-        (error, stdout, stderr) => {
-          if (error) {
-            logger.error(`exec error: ${error}`);
-            return;
-          }
-          logger.info(`stdout: ${stdout}`);
-          logger.warn(`stderr: ${stderr}`);
+      exec(`"${SERVICE_MANAGER}" restart dnsmasq`, (error, stdout, stderr) => {
+        if (error) {
+          logger.error(`exec error: ${error}`);
+          return;
         }
-      );
+        logger.info(`stdout: ${stdout}`);
+        logger.warn(`stderr: ${stderr}`);
+      });
     }
 
     return config;
