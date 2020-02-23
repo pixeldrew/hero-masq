@@ -1,0 +1,44 @@
+version: "3"
+services:
+  dhcphelper:
+    build: ./dhcp-helper
+    restart: unless-stopped
+    network_mode: "host"
+    command: -s 172.31.0.33
+    cap_add:
+      - NET_ADMIN
+
+  dnscrypt-proxy:
+    image: mattbodholdt/dnscrypt-proxy
+    restart: unless-stopped
+    dns: 127.0.0.1
+    networks:
+      backend:
+        ipv4_address: 172.31.0.32
+
+  hero-mask:
+    build:
+      context: .
+    ports:
+      - "3000:3000/tcp"
+      - "53:53"
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    dns:
+      - 127.0.0.1
+    volumes:
+      - "./dnsmasq/conf:/etc/dnsmasq.d/"
+      - "./dnsmasq/lease:/var/lib/dnsmasq/"
+    depends_on:
+      - dhcphelper
+      - dnscrypt-proxy
+    networks:
+      backend:
+        ipv4_address: 172.31.0.33
+
+networks:
+  backend:
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16
