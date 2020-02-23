@@ -19,15 +19,16 @@ function getDhcpHost(domain, host) {
   let hostConfig;
 
   if (!host.mac && !host.client) {
-    hostConfig = `address=/${
+    const hostName =
       host.host.indexOf(".") + 1
         ? host.host.indexOf(".")
-        : host.host + "." + domain
-    }/${host.ip}\n`;
+        : host.host + "." + domain;
+
+    hostConfig = `address=/${hostName}/${host.ip}\n`;
     hostConfig += `ptr-record=${host.ip
       .split(".")
       .reverse()
-      .join(".")}.in-addr.arpa,${host.host}\n`;
+      .join(".")}.in-addr.arpa,${hostName}\n`;
   } else {
     hostConfig = `dhcp-host=${configKeys
       .map(k => host[k] || "")
