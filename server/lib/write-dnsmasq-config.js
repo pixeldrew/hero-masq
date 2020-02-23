@@ -14,12 +14,16 @@ const {
   SERVICE_MANAGER
 } = process.env;
 
-function getDhcpHost(host) {
+function getDhcpHost(domain, host) {
   let configKeys = [...HOST_CONFIG_KEYS];
   let hostConfig;
 
   if (!host.mac && !host.client) {
-    hostConfig = `address=/${host.host}/${host.ip}\n`;
+    hostConfig = `address=/${
+      host.host.indexOf(".") + 1
+        ? host.host.indexOf(".")
+        : host.host + "." + domain
+    }/${host.ip}\n`;
     hostConfig += `ptr-record=${host.ip
       .split(".")
       .reverse()
@@ -34,9 +38,9 @@ function getDhcpHost(host) {
   return hostConfig;
 }
 
-function getStaticHosts(staticHosts) {
+function getStaticHosts({ name }, staticHosts) {
   let config = "";
-  config += staticHosts.map(getDhcpHost).join("");
+  config += staticHosts.map(getDhcpHost.bind(null, name)).join("");
   return config;
 }
 
@@ -105,7 +109,7 @@ module.exports = {
     config += getDomain(domain);
     config += getDHCPRange(dhcpRange);
     config += getDHCPOptions(domain);
-    config += getStaticHosts(staticHosts);
+    config += getStaticHosts(domain, staticHosts);
 
     if (NODE_ENV !== "test") {
       try {
