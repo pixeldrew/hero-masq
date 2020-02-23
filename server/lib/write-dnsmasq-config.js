@@ -20,9 +20,7 @@ function getDhcpHost(domain, host) {
 
   if (!host.mac && !host.client) {
     const hostName =
-      host.host.indexOf(".") + 1
-        ? host.host.indexOf(".")
-        : host.host + "." + domain;
+      host.host.indexOf(".") + 1 ? host.host : host.host + "." + domain;
 
     hostConfig = `address=/${hostName}/${host.ip}\n`;
     hostConfig += `ptr-record=${host.ip
