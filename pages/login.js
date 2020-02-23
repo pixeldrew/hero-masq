@@ -6,7 +6,7 @@ import SignIn from "../components/SignIn";
 
 const submitForm = async (setLoginStatus, { username, password }) => {
   try {
-    const loginData = await fetch(process.env.HOST_URL + "/login", {
+    const loginData = await fetch("/login", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: stringify({ username, password })

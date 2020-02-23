@@ -97,6 +97,16 @@ function getConfPath() {
   return confPath;
 }
 
+function getServiceManager(method) {
+  if (SERVICE_MANAGER === "supervisor") {
+    return `"supervisorctl" ${method} dnsmasq`;
+  }
+
+  if (SERVICE_MANAGER === "service") {
+    return `"service" dnsmasq ${method}`;
+  }
+}
+
 /**
  * @return {string}
  */
@@ -131,7 +141,7 @@ module.exports = {
     }
 
     if (NODE_ENV === "production") {
-      exec(`"${SERVICE_MANAGER}" restart dnsmasq`, (error, stdout, stderr) => {
+      exec(getServiceManager("restart"), (error, stdout, stderr) => {
         if (error) {
           logger.error(`exec error: ${error}`);
           return;
