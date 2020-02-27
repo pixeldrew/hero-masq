@@ -53,6 +53,7 @@ const apolloServer = new ApolloServer({
     return { ...user };
   },
   subscriptions: {
+    path: "/heromasq-gql",
     // returns ws context
     onConnect: connectionParams => {
       try {
@@ -84,7 +85,7 @@ app.use(
 authMiddleware(app);
 
 // attach ApolloServer to expressApp by /graphql
-apolloServer.applyMiddleware({ app });
+apolloServer.applyMiddleware({ app, path: "/heromasq-gql" });
 
 apolloServer.installSubscriptionHandlers(httpServer);
 
