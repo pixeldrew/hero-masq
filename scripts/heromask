@@ -1,0 +1,64 @@
+#!/bin/sh
+
+# Copyright (c) 2020, Drew Foehn
+
+# freebsd service script
+# copy to /etc/rc.d/heromasq or /usr/local/etc/rc.d/heromasq and chmod +x
+
+# The following rc variables should be defined in rc.conf:
+
+# heromasq_enable 	YES|NO
+# heromasq_dir      String The directory where the hero-masq application lives
+# [heromasq_logdir]	String The directory for logfiles. Defaults to ${heromasq_dir}/logs.
+
+# PROVIDE: heromasq
+# REQUIRE: LOGIN dnsmasq
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="heromasq"
+rcvar="${name}_enable"
+
+start_precmd="${name}_prestart"
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
+
+pidfile="/var/run/${name}.pid"
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/games:/usr/local/sbin:/usr/local/bin:/root/bin
+
+# get rc vars
+load_rc_config $name
+: ${heromasq_enable:="no"}
+: ${heromasq_msg:="hero-masq"}
+: ${heromasq_logdir:="${heromasq_dir}/logs"}
+: ${heromasq_nodemon:="${heromasq_dir}/node_modules/.bin/nodemon"}
+
+# make sure we're pointing to the right place
+required_dirs="${heromasq_dir}"
+required_files="${heromasq_dir}/server/index.js"
+
+heromasq_chdir=${heromasq_dir}
+
+# any other checks go here
+heromasq_prestart()
+{
+    echo "${heromasq_msg} starting"
+}
+
+heromasq_start()
+{
+    cd $heromasq_dir
+    NODE_ENV="production" \
+    ${heromasq_nodemon} --delay 2500ms ${heromasq_dir}/server < /dev/null > ${heromasq_logdir}/${heromasq_msg}.log \
+     2>${heromasq_logdir}/${heromasq_msg}_err.log &
+    echo $! > ${pidfile}
+}
+
+heromasq_stop()
+{
+    kill `cat ${pidfile}` && rm -f ${pidfile};
+}
+
+run_rc_command "$1"

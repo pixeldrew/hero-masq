@@ -1,5 +1,10 @@
-write some field validation for statichosts. IP + two of the three fields are required
-write README.md to explain .env variables
-investigate using new docker secret option to pass build .env file
-investigate graphql authentication and authorization using schema directives
-investigate writing an AST for dnsmasq config
+make initialization page that builds .env file
+increase unit test coverage
+add more dnsmasq options
+add i18n support
+investigate graphql authentication and authorization using schema directives to allow for a finer grained ACL
+investigate writing an AST for dnsmasq config so I don't have to write a json file and work with existing configurations
+add a more user friendly interface (tooltips better, layout for mobile)
+increase documentation on docker
+show examples on how to use docker-compose with dnscrypt-proxy
+give examples on how to configure dnsmasq

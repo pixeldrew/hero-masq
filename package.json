@@ -6,12 +6,12 @@
   "license": "MIT",
   "repository": "https://github.com/pixeldrew/hero-masq.git",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon server",
     "build": "next build",
     "postinstall": "npm run build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node server",
     "test": "NODE_ENV=test jest",
-    "clean": "rimraf .next/"
+    "clean": "rimraf .next/ coverage/"
   },
   "engines": {
     "node": ">=12.6"
@@ -24,13 +24,11 @@
   "lint-staged": {
     "*.{js,jsx}": [
       "eslint ./",
-      "pretty-quick --staged",
-      "git add"
+      "pretty-quick --staged"
     ]
   },
   "nodemonConfig": {
     "watch": [
-      "server.js",
       "routes.js",
       "next.config.js",
       "server/**/*.js",
@@ -62,6 +60,7 @@
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "express-unless": "^0.5.0",
+    "find-process": "^1.4.3",
     "fs-extra": "^8.1.0",
     "graphql": "^14.6.0",
     "graphql-iso-date": "^3.6.1",
@@ -74,6 +73,7 @@
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
+    "lodash.debounce": "^4.0.8",
     "netmask": "^1.0.6",
     "next": "^9.2.1",
     "next-offline": "^5.0.0",

@@ -1,7 +1,7 @@
 // set env variables
 require("dotenv-defaults").config();
 
-const logger = require("./server/lib/logger");
+const logger = require("./lib/logger");
 
 // create server
 const { createServer } = require("http");
@@ -17,17 +17,17 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 
 // local middleware
-const authMiddleware = require("./server/middleware/authentication");
-const verifyToken = require("./server/lib/verify-token");
+const authMiddleware = require("./middleware/authentication");
+const verifyToken = require("./lib/verify-token");
 
 const { PORT = 3000, NODE_ENV = "dev", USER_NAME } = process.env;
 const port = parseInt(PORT, 10);
 
 const routes = require("./routes");
-const { typeDefs, resolvers, schemaDirectives } = require("./server/schema");
+const { typeDefs, resolvers, schemaDirectives } = require("./schema");
 
 const app = express();
-const nextApp = next(require("./next.config"));
+const nextApp = next(require("../next.config"));
 const nextRequestHandler = routes.getRequestHandler(nextApp);
 
 // configure apollo server
@@ -53,6 +53,7 @@ const apolloServer = new ApolloServer({
     return { ...user };
   },
   subscriptions: {
+    path: "/heromasq-gql",
     // returns ws context
     onConnect: connectionParams => {
       try {
@@ -84,7 +85,7 @@ app.use(
 authMiddleware(app);
 
 // attach ApolloServer to expressApp by /graphql
-apolloServer.applyMiddleware({ app });
+apolloServer.applyMiddleware({ app, path: "/heromasq-gql" });
 
 apolloServer.installSubscriptionHandlers(httpServer);
 
@@ -117,4 +118,14 @@ nextApp.prepare().then(() => {
       `🚀 Subscriptions ready at ws://localhost:${port}${apolloServer.subscriptionsPath}`
     );
   });
+});
+
+process.on("SIGINT", () => {
+  logger.info("exiting");
+  process.exit();
+});
+
+process.on("SIGTERM", () => {
+  logger.info("exiting");
+  process.exit();
 });

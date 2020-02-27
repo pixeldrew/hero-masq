@@ -12,19 +12,6 @@ const env = Object.entries(process.env)
     return env;
   }, {});
 
-const port =
-  env["PORT"] !== "80" || env["PORT"] !== "443" ? `:${env["PORT"]}` : "";
-const protocol = env["PORT"] === "443" ? "https:" : "http:";
-const websocketProtocol = env["PORT"] === "443" ? "wss:" : "ws:";
-
-// set default urls
-env["HOST_URL"] = `//${env["HOST_NAME"]}${port}`;
-env["GRAPHQL_URL"] = `${env["HOST_URL"]}${env["GRAPHQL_ENDPOINT"]}`;
-env["WEBSOCKET_PROTOCOL"] = websocketProtocol;
-env["WEBSOCKET_URL"] = `${websocketProtocol}${env["GRAPHQL_URL"]}`;
-env["GRAPHQL_URL"] = `${protocol}${env["GRAPHQL_URL"]}`;
-env["HOST_URL"] = `${protocol}${env["HOST_URL"]}`;
-
 const nextConfig = {
   dev,
   env: {
