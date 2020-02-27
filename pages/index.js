@@ -24,7 +24,7 @@ function Home({ headers }) {
   return (
     <div>
       <Head>
-        <title>DNSMasq Leases</title>
+        <title>hero-masq</title>
       </Head>
       <Grid
         container
