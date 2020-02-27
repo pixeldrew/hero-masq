@@ -23,7 +23,7 @@ const verifyToken = require("./server/lib/verify-token");
 const { PORT = 3000, NODE_ENV = "dev", USER_NAME } = process.env;
 const port = parseInt(PORT, 10);
 
-const routes = require("./routes");
+const routes = require("./server/routes");
 const { typeDefs, resolvers, schemaDirectives } = require("./server/schema");
 
 const app = express();
