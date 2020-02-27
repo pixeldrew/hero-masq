@@ -118,3 +118,13 @@ nextApp.prepare().then(() => {
     );
   });
 });
+
+process.on("SIGINT", () => {
+  logger.info("exiting");
+  process.exit();
+});
+
+process.on("SIGTERM", () => {
+  logger.info("exiting");
+  process.exit();
+});
