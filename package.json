@@ -11,7 +11,7 @@
     "postinstall": "npm run build",
     "start": "NODE_ENV=production node server.js",
     "test": "NODE_ENV=test jest",
-    "clean": "rimraf .next/"
+    "clean": "rimraf .next/ coverage/"
   },
   "engines": {
     "node": ">=12.6"
