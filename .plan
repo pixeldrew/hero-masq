@@ -1,5 +1,4 @@
-write some field validation for statichosts. IP + two of the three fields are required
-write README.md to explain .env variables
-investigate using new docker secret option to pass build .env file
-investigate graphql authentication and authorization using schema directives
+make initialization page that builds an .env file
+increase unit test coverage
+investigate graphql authentication and authorization using schema directives to allow for a better ACL
 investigate writing an AST for dnsmasq config

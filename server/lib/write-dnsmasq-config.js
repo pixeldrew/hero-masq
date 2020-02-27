@@ -62,11 +62,11 @@ function getDHCPRange(dhcpRange) {
 function getDHCPOptions({ name }) {
   let config = "";
 
-  if (HOST_IP) {
+  if (HOST_IP && NODE_ENV !== "test") {
     config += `dhcp-option=option:dns-server,${HOST_IP.split("/").shift()}\n`;
   }
 
-  if (ROUTER_IP) {
+  if (ROUTER_IP && NODE_ENV !== "test") {
     config += `dhcp-option=option:router,${ROUTER_IP}\n`;
   }
 
@@ -104,58 +104,57 @@ async function getSigHupCmd() {
   return `kill -HUP ${dnsMasqPid[0].pid}`;
 }
 
+function writeConfig({ domain, dhcpRange, staticHosts }) {
+  let config = "",
+    confPath = getConfPath();
+
+  config += getDomain(domain);
+  config += getDHCPRange(dhcpRange);
+  config += getDHCPOptions(domain);
+  config += getStaticHosts(domain, staticHosts);
+
+  if (NODE_ENV !== "test") {
+    try {
+      fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
+        encoding: "utf8",
+        flag: "w"
+      });
+
+      fse.outputFileSync(
+        path.resolve(confPath, "hero-masq.json"),
+        JSON.stringify({ domain, dhcpRange, staticHosts }, null, 4),
+        {
+          encoding: "utf8",
+          flag: "w"
+        }
+      );
+    } catch (e) {
+      logger.warn(`unable to write config, ${confPath}`);
+    }
+  }
+
+  if (NODE_ENV === "production") {
+    getSigHupCmd().then(reloadCommand => {
+      logger.info(`sending dnsmasq SIGHUP, ${reloadCommand}`);
+      exec(reloadCommand, (error, stdout, stderr) => {
+        if (error) {
+          logger.error(`unable to reload dnsmasq config, ${stderr}`);
+          return;
+        }
+        logger.info(`reloaded dnsmasq config`);
+      });
+    });
+  }
+
+  return config;
+}
+
 /**
  * @return {string}
  */
 module.exports = {
-  writeConfig: debounce(
-    function WriteConfig({ domain, dhcpRange, staticHosts }) {
-      let config = "",
-        confPath = getConfPath();
-
-      config += getDomain(domain);
-      config += getDHCPRange(dhcpRange);
-      config += getDHCPOptions(domain);
-      config += getStaticHosts(domain, staticHosts);
-
-      if (NODE_ENV !== "test") {
-        try {
-          fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
-            encoding: "utf8",
-            flag: "w"
-          });
-
-          fse.outputFileSync(
-            path.resolve(confPath, "hero-masq.json"),
-            JSON.stringify({ domain, dhcpRange, staticHosts }, null, 4),
-            {
-              encoding: "utf8",
-              flag: "w"
-            }
-          );
-        } catch (e) {
-          logger.warn(`unable to write config, ${confPath}`);
-        }
-      }
-
-      if (NODE_ENV === "production") {
-        getSigHupCmd().then(reloadCommand => {
-          logger.info(`sending dnsmasq SIGHUP, ${reloadCommand}`);
-          exec(reloadCommand, (error, stdout, stderr) => {
-            if (error) {
-              logger.error(`unable to reload dnsmasq config, ${stderr}`);
-              return;
-            }
-            logger.info(`reloaded dnsmasq config`);
-          });
-        });
-      }
-
-      return config;
-    },
-
-    500
-  ),
+  _writeConfig: writeConfig,
+  writeConfig: debounce(writeConfig, 500),
   getConfig: () => {
     try {
       return JSON.parse(
