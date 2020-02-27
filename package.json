@@ -24,8 +24,7 @@
   "lint-staged": {
     "*.{js,jsx}": [
       "eslint ./",
-      "pretty-quick --staged",
-      "git add"
+      "pretty-quick --staged"
     ]
   },
   "nodemonConfig": {
