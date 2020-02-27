@@ -6,10 +6,10 @@
   "license": "MIT",
   "repository": "https://github.com/pixeldrew/hero-masq.git",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon server",
     "build": "next build",
     "postinstall": "npm run build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node server",
     "test": "NODE_ENV=test jest",
     "clean": "rimraf .next/ coverage/"
   },
@@ -29,7 +29,6 @@
   },
   "nodemonConfig": {
     "watch": [
-      "server.js",
       "routes.js",
       "next.config.js",
       "server/**/*.js",

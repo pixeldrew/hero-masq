@@ -37,7 +37,7 @@ load_rc_config $name
 
 # make sure we're pointing to the right place
 required_dirs="${heromasq_dir}"
-required_files="${heromasq_dir}/server.js"
+required_files="${heromasq_dir}/server/index.js"
 
 heromasq_chdir=${heromasq_dir}
 
@@ -51,7 +51,7 @@ heromasq_start()
 {
     cd $heromasq_dir
     NODE_ENV="production" \
-    ${heromasq_nodemon} --delay 2500ms ${heromasq_dir}/server.js < /dev/null > ${heromasq_logdir}/${heromasq_msg}.log \
+    ${heromasq_nodemon} --delay 2500ms ${heromasq_dir}/server < /dev/null > ${heromasq_logdir}/${heromasq_msg}.log \
      2>${heromasq_logdir}/${heromasq_msg}_err.log &
     echo $! > ${pidfile}
 }

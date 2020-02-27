@@ -5,10 +5,10 @@
 .editorconfig
 .eslintrc.json
 .plan
-.env.default
+.env
 docker-compose.yml
 jest*
 node_modules
 npm-debug.log
-dhcp-helper
 dnsmasq
+coverage

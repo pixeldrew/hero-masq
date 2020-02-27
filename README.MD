@@ -1,12 +1,13 @@
 # hero-masq
+
 Copyright 2020 Drew Foehn <drew@foe.hn>
 License: MIT
 
-Lightweight web frontend for dnsmasq
+Lightweight web frontend for dnsmasq.
 
-Built with Next.js, Apollo GraphQL, React, Material ui
+Built with Next.js, Apollo GraphQL, React and Material Ui
 
-To run local dev install
+To test locally:
 
 ```bash
 git clone https://github.com/pixeldrew/hero-masq.git
@@ -27,18 +28,27 @@ ROUTER_IP=192.168.0.1 # gateway ip to send to DHCP clients
 DNSMASQ_CONF_LOCATION="/usr/local/etc/dnsmasq.d/" # location to save configuration
 ```
 
-Docker deployment works but requires network be set to host or setup like the docker-compose.yml example
-
-If not running in Docker, I suggest running this in an iocage or something similar as root permissions are needed to 
-start/stop dnsmasq and modify the dnsmasq configuration.
-
 ### How This Works
 
+Dnsmasq should be running on the host you're running the frontend from. 
 
-DNSMasq Configuration is written to ${DNSMASQ_CONF_LOCATION}/hero-masq.conf and the dnsmasq service is restarted.
-The default dnsmasq.conf should have a conf-dir line like this (DNSMASQ_CONF_LOCATION should be the same as specified in the 
-.env file):
-
+Dnsmasq configuration is written to ${DNSMASQ_CONF_LOCATION}/hero-masq.conf. The dnsmasq service is then sent a SIGHUP
+ to reload it's config, flush it's cache and restart.
+In order for this to work, the default dnsmasq.conf should have a conf-dir line like this:
 ```
 conf-dir=/etc/dnsmasq.d,*.conf
 ``` 
+
+Docker deployment works but requires the docker container to have their network to be configured as host or see the 
+docker-compose.yml example for more advanced things like using a dns-crypt proxy
+
+If you're not running in Docker, I suggest running this in an iocage or something similar as root permissions are 
+needed to write dnsmasq configs and to reload the configs.
+
+### Why?
+
+I built this when I found out my new router couldn't run DD-WRT and only had a DHCP server with no integragated DNS. 
+I like having a local dns so I have user friendly machine name access. 
+
+### Future
+See .plan if you're looking to help out

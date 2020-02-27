@@ -10,10 +10,12 @@ server=${DNS}
 domain-needed
 bogus-priv
 no-hosts
-keep-in-foreground
 no-resolv
 expand-hosts
 dhcp-leasefile=/var/lib/dnsmasqd/dnsmasq.leases
+dhcp-name-match=set:wpad-ignore,wpad
+dhcp-ignore-names=tag:wpad-ignore
+stop-dns-rebind
 CONFIG
 
 cat << CONFIG > /etc/supervisord.conf
