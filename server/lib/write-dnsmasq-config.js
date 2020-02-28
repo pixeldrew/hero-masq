@@ -65,10 +65,9 @@ function getStaticHosts({ name }, staticHosts) {
   return config;
 }
 
-function getDHCPRange(dhcpRange) {
+function getDHCPRange({ startIp, endIp, leaseExpiry }) {
   let config = "",
     mask = "";
-  const { startIp, endIp, leaseExpiry } = dhcpRange;
 
   if (HOST_IP) {
     if (!/\//.test(HOST_IP)) {
@@ -198,7 +197,7 @@ module.exports = {
       return {
         domain: { name: "" },
         staticHosts: [],
-        dhcpRange: { startIp: "", endIp: "", leaseExpiry: "1d" }
+        dhcpRange: { startIp: "", endIp: "", leaseExpiry: "" }
       };
     }
   }

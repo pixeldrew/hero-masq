@@ -1,13 +1,26 @@
-make initialization page that builds .env file
-refactor StaticHosts.leaseExpiry to StaticHosts.Expiry makes more sense since we're also using it for a records
+refactor StaticHosts.leaseExpiry to StaticHosts.Expiry makes more sense since we're also using StaticHosts for a records
 increase unit test coverage
-add more dnsmasq options
+add more dnsmasq options (which ones?)
+	txt-record
+    auth-zone
+	mx-host
 add i18n support
+add a more user friendly interface (tooltips, better layout for mobile)
+log output to syslog
+send SIGUSR1 to dnsmasq then view log output that displays cache information
+add a way to delete a lease (infinite leases are stuck)
+put a note about dhcp leasetimes that they shouldn't be less than an hour
+increase documentation on docker deployment
+	show examples on how to use docker-compose with dnscrypt-proxy
+	give examples on how to configure dnsmasq
+look for a way to include certbot dns challange support in docker build for ssl
 investigate graphql authentication and authorization using schema directives to allow for a finer grained ACL
 investigate writing an AST for dnsmasq config so I don't have to write a json file and work with existing configurations
-add a more user friendly interface (tooltips better, layout for mobile)
-increase documentation on docker
-show examples on how to use docker-compose with dnscrypt-proxy
-give examples on how to configure dnsmasq
-make log output to syslog
+
+
+defects:
+sighup doesn't reload configuration files
+		remedy: static hosts go to addnhosts file and dhcp-hosts go to dhcp-hostsfile
+problems:
+	have to restart dnsmasq when dhcp range or domain and is updated
 
