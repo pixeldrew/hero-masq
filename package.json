@@ -14,7 +14,7 @@
     "clean": "rimraf .next/ coverage/"
   },
   "engines": {
-    "node": ">=12.6"
+    "node": ">=13"
   },
   "husky": {
     "hooks": {

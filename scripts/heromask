@@ -51,8 +51,8 @@ heromasq_start()
 {
     cd $heromasq_dir
     NODE_ENV="production" \
-    ${heromasq_nodemon} --delay 2500ms ${heromasq_dir}/server < /dev/null > ${heromasq_logdir}/${heromasq_msg}.log \
-     2>${heromasq_logdir}/${heromasq_msg}_err.log &
+    ${heromasq_nodemon} --delay 2500ms ${heromasq_dir}/server < /dev/null >> ${heromasq_logdir}/${heromasq_msg}.log \
+     2>>${heromasq_logdir}/${heromasq_msg}_err.log &
     echo $! > ${pidfile}
 }
 

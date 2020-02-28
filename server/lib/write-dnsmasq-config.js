@@ -10,6 +10,30 @@ const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
 const { HOST_IP, ROUTER_IP, NODE_ENV, DNSMASQ_CONF_LOCATION } = process.env;
 
+function convertExpiryToTTL(expiry) {
+  // infinite is 0 TTL
+  if (expiry === "infinite") {
+    return "0";
+  }
+
+  try {
+    let [match, length, period] = /([0-9])+([smh])/.exec(expiry);
+
+    if (period === "m") {
+      return length * 60;
+    }
+
+    if (period === "h") {
+      return length * 60 * 60;
+    }
+
+    return length;
+  } catch (e) {
+    logger.info(`could not find match, ${expiry}`);
+    return "0";
+  }
+}
+
 function getDhcpHost(domain, host) {
   let configKeys = [...HOST_CONFIG_KEYS];
   let hostConfig;
@@ -18,7 +42,9 @@ function getDhcpHost(domain, host) {
     const hostName =
       host.host.indexOf(".") + 1 ? host.host : host.host + "." + domain;
 
-    hostConfig = `address=/${hostName}/${host.ip}\n`;
+    hostConfig = `host-record=${hostName},${host.ip},${convertExpiryToTTL(
+      host.leaseExpiry
+    )}\n`;
     hostConfig += `ptr-record=${host.ip
       .split(".")
       .reverse()
@@ -163,7 +189,12 @@ module.exports = {
         })
       );
     } catch (e) {
-      logger.warn("unable to open config");
+      logger.warn(
+        `unable to open config, ${path.resolve(
+          getConfPath(),
+          "hero-masq.json"
+        )}`
+      );
       return {
         domain: { name: "" },
         staticHosts: [],

@@ -1,4 +1,5 @@
 make initialization page that builds .env file
+refactor StaticHosts.leaseExpiry to StaticHosts.Expiry makes more sense since we're also using it for a records
 increase unit test coverage
 add more dnsmasq options
 add i18n support
@@ -8,3 +9,5 @@ add a more user friendly interface (tooltips better, layout for mobile)
 increase documentation on docker
 show examples on how to use docker-compose with dnscrypt-proxy
 give examples on how to configure dnsmasq
+make log output to syslog
+

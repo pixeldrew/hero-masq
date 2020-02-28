@@ -1,5 +1,4 @@
 const { _writeConfig: writeConfig } = require("../write-dnsmasq-config");
-const getStaticHostKey = require("../get-statichost-key");
 
 const domain = { name: "testdomain.com" };
 const dhcpRange = {
@@ -13,22 +12,31 @@ const staticHosts = [
     client: "",
     ip: "192.168.0.5",
     host: "world",
-    leaseExpiry: "1y"
+    leaseExpiry: "24h"
   },
   {
-    mac: "FF:00:FF:00:FF:FB",
+    mac: "",
+    client: "",
+    ip: "192.168.0.5",
+    host: "blah",
+    leaseExpiry: "24h"
+  },
+  {
+    mac: "",
     client: "buck",
     ip: "192.168.0.6",
     host: "",
-    leaseExpiry: ""
+    leaseExpiry: "8h"
   }
 ];
 
 const testOutput = `domain=testdomain.com
 dhcp-range=192.168.0.10,192.168.0.100,255.255.255.0,1d
 dhcp-option=option:domain-search,testdomain.com
-dhcp-host=FF:00:FF:00:FF:FA,192.168.0.5,world,1y
-dhcp-host=FF:00:FF:00:FF:FB,buck,192.168.0.6
+dhcp-host=FF:00:FF:00:FF:FA,192.168.0.5,world,24h
+host-record=blah.testdomain.com,192.168.0.5,14400
+ptr-record=5.0.168.192.in-addr.arpa,blah.testdomain.com
+dhcp-host=buck,192.168.0.6,8h
 `;
 
 describe("write-dnsmasq-config", () => {
