@@ -4,7 +4,7 @@ const domain = { name: "testdomain.com" };
 const dhcpRange = {
   startIp: "192.168.0.10",
   endIp: "192.168.0.100",
-  leaseExpiry: "1d"
+  leaseExpiry: "24h"
 };
 const staticHosts = [
   {
@@ -31,7 +31,7 @@ const staticHosts = [
 ];
 
 const testOutput = `domain=testdomain.com
-dhcp-range=192.168.0.10,192.168.0.100,255.255.255.0,1d
+dhcp-range=192.168.0.10,192.168.0.100,255.255.255.0,24h
 dhcp-option=option:domain-search,testdomain.com
 dhcp-host=FF:00:FF:00:FF:FA,192.168.0.5,world,24h
 host-record=blah.testdomain.com,192.168.0.5,14400
