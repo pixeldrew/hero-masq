@@ -35,7 +35,6 @@ dhcp-range=192.168.0.10,192.168.0.100,255.255.255.0,24h
 dhcp-option=option:domain-search,testdomain.com
 dhcp-host=FF:00:FF:00:FF:FA,192.168.0.5,world,24h
 host-record=blah.testdomain.com,192.168.0.5,14400
-ptr-record=5.0.168.192.in-addr.arpa,blah.testdomain.com
 dhcp-host=buck,192.168.0.6,8h
 `;
 

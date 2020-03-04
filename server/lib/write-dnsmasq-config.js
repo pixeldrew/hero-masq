@@ -45,10 +45,6 @@ function getDhcpHost(domain, host) {
     hostConfig = `host-record=${hostName},${host.ip},${convertExpiryToTTL(
       host.leaseExpiry
     )}\n`;
-    hostConfig += `ptr-record=${host.ip
-      .split(".")
-      .reverse()
-      .join(".")}.in-addr.arpa,${hostName}\n`;
   } else {
     hostConfig = `dhcp-host=${configKeys
       .map(k => host[k] || "")
@@ -118,7 +114,17 @@ function getConfPath() {
   return confPath;
 }
 
-async function getSigHupCmd() {
+function getServiceManager(method) {
+  if (SERVICE_MANAGER === "supervisor") {
+    return `"supervisorctl" ${method} dnsmasq`;
+  }
+
+  if (SERVICE_MANAGER === "service") {
+    return `"service" dnsmasq ${method}`;
+  }
+}
+
+async function getDnsMasqPid() {
   let dnsMasqPid;
   try {
     dnsMasqPid = await find("name", "dnsmasq");
@@ -126,12 +132,14 @@ async function getSigHupCmd() {
     logger.warn("Unable to find dnsmasq pid. Is dnsmasq running?");
     throw new Error("PID_NOT_FOUND");
   }
-  return `kill -HUP ${dnsMasqPid[0].pid}`;
+  return dnsMasqPid[0].pid;
 }
 
 function writeConfig({ domain, dhcpRange, staticHosts }) {
   let config = "",
-    confPath = getConfPath();
+    confPath = getConfPath(),
+    dhcpHosts = "",
+    hosts = "";
 
   config += getDomain(domain);
   config += getDHCPRange(dhcpRange);
@@ -159,14 +167,20 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
   }
 
   if (NODE_ENV === "production") {
-    getSigHupCmd().then(reloadCommand => {
-      logger.info(`sending dnsmasq SIGHUP, ${reloadCommand}`);
+    getDnsMasqPid().then(pid => {
+      logger.info(`restarting dnsmasq`);
+      const reloadCommand = getServiceManager();
       exec(reloadCommand, (error, stdout, stderr) => {
         if (error) {
-          logger.error(`unable to reload dnsmasq config, ${stderr}`);
+          logger.error(`unable to reload dnsmasq, ${stderr}`);
           return;
         }
-        logger.info(`reloaded dnsmasq config`);
+        getDnsMasqPid().then(newPid => {
+          if (newPid === pid) {
+            logger.error(`dnsmasq not reloaded, old pid stll around`);
+          }
+          logger.info(`restarted dnsmasq, new pid ${newPid}`);
+        });
       });
     });
   }
