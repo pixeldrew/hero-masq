@@ -6,7 +6,8 @@ const pubsub = require("./lib/pubsub");
 const {
   CONFIG_DOMAIN_UPDATED,
   CONFIG_DHCP_RANGE_UPDATED,
-  CONFIG_STATIC_HOSTS_UPDATED
+  CONFIG_STATIC_HOSTS_UPDATED,
+  LOG_MESSAGE_TOPIC
 } = require("./lib/constants");
 
 const {
@@ -41,6 +42,28 @@ const Root = gql`
   }
 `;
 
+const logMessageTypeDef = gql`
+  "logs"
+  type LogMessage {
+    "log updated"
+    logTime: DateTime
+    "string message"
+    message: String
+  }
+
+  extend type Subscription {
+    logMessage: LogMessage
+  }
+`;
+
+const logMessageResolver = () => ({
+  Subscription: {
+    logMessage: {
+      subscribe: () => pubsub.asyncIterator([LOG_MESSAGE_TOPIC])
+    }
+  }
+});
+
 const config = getConfig();
 
 const updateConfigSave = (key, newVal) => {
@@ -61,12 +84,14 @@ pubsub.subscribe(
 module.exports = {
   typeDefs: [
     Root,
+    logMessageTypeDef,
     staticHostsTypeDef,
     leasesTypeDef,
     dhcpRangeTypeDef,
     domainTypeDef
   ],
   resolvers: merge(
+    logMessageResolver(),
     leasesResolver(),
     dhcpRangeResolver(config.dhcpRange),
     domainResolver(config.domain),
