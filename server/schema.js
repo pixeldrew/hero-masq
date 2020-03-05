@@ -49,8 +49,8 @@ const logMessageTypeDef = gql`
     logTime: DateTime
     "string message"
     message: String
-    "message type: error, success, warning, info"
-    type: String
+    "string messageType: error, success, warning, info"
+    messageType: String
   }
 
   extend type Subscription {

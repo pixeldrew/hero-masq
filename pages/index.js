@@ -36,7 +36,9 @@ function Home({ headers }) {
   const classes = useStyles();
 
   const {
-    data: { logMessage: { logTime = null, message = "", type = "" } = {} } = {},
+    data: {
+      logMessage: { logTime = null, message = "", messageType = "" } = {}
+    } = {},
     loading
   } = useSubscription(LOG_MESSAGE_SUBSCRIPTION);
 
@@ -68,7 +70,7 @@ function Home({ headers }) {
         <Notifier
           message={message}
           time={logTime}
-          options={{ variant: type }}
+          options={{ variant: messageType }}
         />
       </SnackbarProvider>
     </div>
