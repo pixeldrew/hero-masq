@@ -201,7 +201,7 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
               );
             }
             logger.info(`restarted dnsmasq, new pid ${newPid}`);
-            logSubscription(`unable to reload dnsmasq`, "success");
+            logSubscription(`restarted dnsmasq`, "success");
           });
         });
       }
