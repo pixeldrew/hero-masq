@@ -28,6 +28,7 @@ const LOG_MESSAGE_SUBSCRIPTION = gql`
     logMessage {
       logTime
       message
+      type
     }
   }
 `;
@@ -36,9 +37,7 @@ function Home({ headers }) {
   const classes = useStyles();
 
   const {
-    data: {
-      logMessage: { logTime = null, message = "", messageType = "" } = {}
-    } = {},
+    data: { logMessage: { logTime = null, message = "", type = "" } = {} } = {},
     loading
   } = useSubscription(LOG_MESSAGE_SUBSCRIPTION);
 
@@ -70,7 +69,7 @@ function Home({ headers }) {
         <Notifier
           message={message}
           time={logTime}
-          options={{ variant: messageType }}
+          options={{ variant: type }}
         />
       </SnackbarProvider>
     </div>
