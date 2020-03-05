@@ -9,7 +9,13 @@ const logSubscription = require("../lib/log-subscription");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
-const { HOST_IP, ROUTER_IP, NODE_ENV, DNSMASQ_CONF_LOCATION } = process.env;
+const {
+  HOST_IP,
+  ROUTER_IP,
+  NODE_ENV,
+  DNSMASQ_CONF_LOCATION,
+  SERVICE_MANAGER
+} = process.env;
 
 function convertExpiryToTTL(expiry) {
   // infinite is 0 TTL
