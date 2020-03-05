@@ -184,7 +184,7 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
   if (NODE_ENV === "production") {
     getDnsMasqPid().then(pid => {
       logger.info(`restarting dnsmasq`);
-      const reloadCommand = getServiceManager();
+      const reloadCommand = getServiceManager("restart");
       if (reloadCommand) {
         exec(reloadCommand, (error, stdout, stderr) => {
           if (error) {
