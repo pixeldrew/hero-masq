@@ -14,7 +14,7 @@ git clone https://github.com/pixeldrew/hero-masq.git
 cd hero-masq/
 copy .env.default .env
 npm install
-npm run dev
+npm run dev 
 ```
 
 ENV Options are as follows:
@@ -26,6 +26,7 @@ JWT_SECRET=auniquetokenmakeitcomplex123 #jwt encoding token, keep this secret
 HOST_IP=192.168.0.2/24 # host ip
 ROUTER_IP=192.168.0.1 # gateway ip to send to DHCP clients
 DNSMASQ_CONF_LOCATION="/usr/local/etc/dnsmasq.d/" # location to save configuration
+SERVICE_MANAGER=service # supports "service" for freebsd/debian installs or the docker controller "supervisor"
 ```
 
 ### How This Works

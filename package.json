@@ -1,6 +1,6 @@
 {
   "name": "hero-masq",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "dnsmasq config manager",
   "main": "index.js",
   "license": "MIT",
@@ -8,13 +8,13 @@
   "scripts": {
     "dev": "nodemon server",
     "build": "next build",
-    "postinstall": "npm run build",
+    "postinstall": "npm run clean && npm run build",
     "start": "NODE_ENV=production node server",
     "test": "NODE_ENV=test jest",
     "clean": "rimraf .next/ coverage/"
   },
   "engines": {
-    "node": ">=12.6"
+    "node": ">=13"
   },
   "husky": {
     "hooks": {
@@ -78,6 +78,7 @@
     "next": "^9.2.1",
     "next-offline": "^5.0.0",
     "next-routes": "^1.4.2",
+    "notistack": "^0.9.8",
     "qs-stringify": "^1.2.0",
     "react": "^16.12.0",
     "react-apollo": "^3.1.3",

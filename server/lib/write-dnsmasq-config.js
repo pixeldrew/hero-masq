@@ -5,10 +5,41 @@ const { exec } = require("child_process");
 const logger = require("./logger");
 const find = require("find-process");
 const debounce = require("lodash.debounce");
+const logSubscription = require("../lib/log-subscription");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
-const { HOST_IP, ROUTER_IP, NODE_ENV, DNSMASQ_CONF_LOCATION } = process.env;
+const {
+  HOST_IP,
+  ROUTER_IP,
+  NODE_ENV,
+  DNSMASQ_CONF_LOCATION,
+  SERVICE_MANAGER
+} = process.env;
+
+function convertExpiryToTTL(expiry) {
+  // infinite is 0 TTL
+  if (expiry === "infinite") {
+    return "0";
+  }
+
+  try {
+    let [match, length, period] = /([0-9])+([smh])/.exec(expiry);
+
+    if (period === "m") {
+      return length * 60;
+    }
+
+    if (period === "h") {
+      return length * 60 * 60;
+    }
+
+    return length;
+  } catch (e) {
+    logger.info(`could not find match, ${expiry}`);
+    return "0";
+  }
+}
 
 function getDhcpHost(domain, host) {
   let configKeys = [...HOST_CONFIG_KEYS];
@@ -18,11 +49,9 @@ function getDhcpHost(domain, host) {
     const hostName =
       host.host.indexOf(".") + 1 ? host.host : host.host + "." + domain;
 
-    hostConfig = `address=/${hostName}/${host.ip}\n`;
-    hostConfig += `ptr-record=${host.ip
-      .split(".")
-      .reverse()
-      .join(".")}.in-addr.arpa,${hostName}\n`;
+    hostConfig = `host-record=${hostName},${host.ip},${convertExpiryToTTL(
+      host.leaseExpiry
+    )}\n`;
   } else {
     hostConfig = `dhcp-host=${configKeys
       .map(k => host[k] || "")
@@ -39,10 +68,9 @@ function getStaticHosts({ name }, staticHosts) {
   return config;
 }
 
-function getDHCPRange(dhcpRange) {
+function getDHCPRange({ startIp, endIp, leaseExpiry }) {
   let config = "",
     mask = "";
-  const { startIp, endIp, leaseExpiry } = dhcpRange;
 
   if (HOST_IP) {
     if (!/\//.test(HOST_IP)) {
@@ -93,20 +121,38 @@ function getConfPath() {
   return confPath;
 }
 
-async function getSigHupCmd() {
+function getServiceManager(method) {
+  if (SERVICE_MANAGER === "supervisor") {
+    return `"supervisorctl" ${method} dnsmasq`;
+  }
+
+  if (SERVICE_MANAGER === "service") {
+    return `"service" dnsmasq ${method}`;
+  }
+
+  return null;
+}
+
+async function getDnsMasqPid() {
   let dnsMasqPid;
   try {
     dnsMasqPid = await find("name", "dnsmasq");
   } catch (e) {
     logger.warn("Unable to find dnsmasq pid. Is dnsmasq running?");
+    logSubscription(
+      "Unable to find dnsmasq pid. Is dnsmasq running?",
+      "warning"
+    );
     throw new Error("PID_NOT_FOUND");
   }
-  return `kill -HUP ${dnsMasqPid[0].pid}`;
+  return dnsMasqPid[0].pid;
 }
 
 function writeConfig({ domain, dhcpRange, staticHosts }) {
   let config = "",
-    confPath = getConfPath();
+    confPath = getConfPath(),
+    dhcpHosts = "",
+    hosts = "";
 
   config += getDomain(domain);
   config += getDHCPRange(dhcpRange);
@@ -128,21 +174,37 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
           flag: "w"
         }
       );
+      logSubscription(`wrote config, ${confPath}`, "success");
     } catch (e) {
       logger.warn(`unable to write config, ${confPath}`);
+      logSubscription(`unable to write config, ${confPath}`, "error");
     }
   }
 
   if (NODE_ENV === "production") {
-    getSigHupCmd().then(reloadCommand => {
-      logger.info(`sending dnsmasq SIGHUP, ${reloadCommand}`);
-      exec(reloadCommand, (error, stdout, stderr) => {
-        if (error) {
-          logger.error(`unable to reload dnsmasq config, ${stderr}`);
-          return;
-        }
-        logger.info(`reloaded dnsmasq config`);
-      });
+    getDnsMasqPid().then(pid => {
+      logger.info(`restarting dnsmasq`);
+      const reloadCommand = getServiceManager("restart");
+      if (reloadCommand) {
+        exec(reloadCommand, (error, stdout, stderr) => {
+          if (error) {
+            logger.error(`unable to reload dnsmasq, ${stderr}`);
+            logSubscription(`unable to reload dnsmasq`, "error");
+            return;
+          }
+          getDnsMasqPid().then(newPid => {
+            if (newPid === pid) {
+              logger.error(`dnsmasq not reloaded, old pid stll around`);
+              logSubscription(
+                `dnsmasq not reloaded, old pid stll around`,
+                "warning"
+              );
+            }
+            logger.info(`restarted dnsmasq, new pid ${newPid}`);
+            logSubscription(`restarted dnsmasq`, "success");
+          });
+        });
+      }
     });
   }
 
@@ -156,18 +218,19 @@ module.exports = {
   _writeConfig: writeConfig,
   writeConfig: debounce(writeConfig, 500),
   getConfig: () => {
+    const filename = path.resolve(getConfPath(), "hero-masq.json");
     try {
       return JSON.parse(
-        fse.readFileSync(path.resolve(getConfPath(), "hero-masq.json"), {
+        fse.readFileSync(filename, {
           encoding: "utf8"
         })
       );
     } catch (e) {
-      logger.warn("unable to open config");
+      logger.warn(`unable to open config, ${filename}`);
       return {
         domain: { name: "" },
         staticHosts: [],
-        dhcpRange: { startIp: "", endIp: "", leaseExpiry: "1d" }
+        dhcpRange: { startIp: "", endIp: "", leaseExpiry: "" }
       };
     }
   }

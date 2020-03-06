@@ -42,7 +42,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
       ip: "",
       host: "",
       client: "",
-      leaseExpiry: LEASE_EXPIRATIONS[0].value
+      leaseExpiry: "24h"
     },
     object({
       id: string(),

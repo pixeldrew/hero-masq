@@ -2,6 +2,7 @@ const { gql } = require("apollo-server-express");
 const fse = require("fs-extra");
 const dnsmasqLeases = require("dnsmasq-leases");
 const logger = require("../lib/logger");
+const logSubscription = require("../lib/log-subscription");
 
 const pubsub = require("../lib/pubsub");
 const { LEASE_FILE, LEASES_UPDATED_TOPIC } = require("./../lib/constants");
@@ -71,6 +72,7 @@ module.exports.resolvers = () => {
       pubsub.publish(LEASES_UPDATED_TOPIC, {
         leasesUpdated: { dateUpdated: new Date() }
       });
+      logSubscription("leases updated");
     }
   });
 

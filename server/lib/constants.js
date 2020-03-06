@@ -6,6 +6,8 @@ module.exports.LEASE_FILE =
     ? __dirname + "/__tests__/data/dnsmasq.leases"
     : "/var/lib/dnsmasqd/dnsmasq.leases";
 
+module.exports.LOG_MESSAGE_TOPIC = "log_message";
+
 module.exports.LEASES_UPDATED_TOPIC = "leases_updated";
 
 module.exports.CONFIG_DOMAIN_UPDATED = "config_domain_updated";

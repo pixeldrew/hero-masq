@@ -35,7 +35,7 @@ export function StaticHostsList({ editHost, deleteHost, staticHosts }) {
           <TableCell>Host Name</TableCell>
           <TableCell>Mac Address</TableCell>
           <TableCell>Client Id</TableCell>
-          <TableCell>Lease Expiry</TableCell>
+          <TableCell>Expiry</TableCell>
           <TableCell></TableCell>
         </TableRow>
       </TableHead>

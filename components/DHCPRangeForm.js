@@ -67,7 +67,7 @@ export function DHCPRangeForm({ submitForm }) {
   const defaultDhcpRange = {
     startIp: "",
     endIp: "",
-    leaseExpiry: "1d"
+    leaseExpiry: ""
   };
 
   const { values, handleChange, handleSubmit, hasError, disable } = useForm(
