@@ -7,6 +7,8 @@ Lightweight web frontend for dnsmasq.
 
 Built with Next.js, Apollo GraphQL, React and Material Ui
 
+![Node.js CI](https://github.com/pixeldrew/hero-masq/workflows/Node.js%20CI/badge.svg)[![codecov](https://codecov.io/gh/pixeldrew/hero-masq/branch/master/graph/badge.svg)](https://codecov.io/gh/pixeldrew/hero-masq)
+
 To test locally:
 
 ```bash

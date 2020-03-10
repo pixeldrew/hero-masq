@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const LEASES_QUERY = gql`
+export const LEASES_QUERY = gql`
   {
     leases {
       mac
