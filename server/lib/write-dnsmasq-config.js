@@ -4,7 +4,7 @@ const Netmask = require("netmask").Netmask;
 const { exec } = require("child_process");
 const logger = require("./logger");
 const find = require("find-process");
-const debounce = require("lodash.debounce");
+const { debounce } = require("lodash");
 const logSubscription = require("../lib/log-subscription");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];

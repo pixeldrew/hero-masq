@@ -1,12 +1,10 @@
+import React from "react";
+import { render, waitForElement } from "@testing-library/react";
 import { MockedProvider } from "@apollo/react-testing";
-import wait from "waait";
-import { mount, shallow } from "enzyme";
 
 // The component AND the query need to be exported
 import { LEASES_QUERY, Leases } from "../Leases";
-import TableCell from "@material-ui/core/TableCell";
-
-import React from "react";
+import { LEASES_UPDATED_SUBSCRIPTION } from "../LastUpdated";
 
 const mocks = [
   {
@@ -26,39 +24,39 @@ const mocks = [
         ]
       }
     }
+  },
+  {
+    request: {
+      query: LEASES_UPDATED_SUBSCRIPTION
+    },
+    result: {
+      data: {
+        leasesUpdated: {
+          dateUpdated: "2020-03-12T15:27:45.782Z"
+        }
+      }
+    }
   }
 ];
 
-it("renders without error", () => {
-  mount(
+it("should render loading state initially", async () => {
+  const { getByText } = render(
     <MockedProvider mocks={mocks} addTypename={false}>
       <Leases />
     </MockedProvider>
   );
-});
-//
-it("should render loading state initially", () => {
-  const component = render(
-    <MockedProvider mocks={[]}>
-      <Leases />
-    </MockedProvider>
-  );
 
-  expect(component.text()).toEqual("Fetching");
+  expect(getByText("Fetching")).toHaveTextContent("Fetching");
 });
 
 it("should render leases", async () => {
-  const component = mount(
+  const { getByText } = render(
     <MockedProvider mocks={mocks} addTypename={false}>
       <Leases />
     </MockedProvider>
   );
 
-  await wait(0); // wait for response
+  const ipTextNode = await waitForElement(() => getByText("10.137.0.110"));
 
-  console.log(component.html());
-
-  expect(
-    component.containsMatchingElement(<TableCell>10.137.0.110</TableCell>)
-  ).toEqual(true);
+  expect(ipTextNode).toHaveTextContent("10.137.0.110");
 });
