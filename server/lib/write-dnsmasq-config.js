@@ -137,6 +137,7 @@ async function getDnsMasqPid() {
   let dnsMasqPid;
   try {
     dnsMasqPid = await find("name", "dnsmasq");
+    return dnsMasqPid[0].pid;
   } catch (e) {
     logger.warn("Unable to find dnsmasq pid. Is dnsmasq running?");
     logSubscription(
@@ -145,7 +146,6 @@ async function getDnsMasqPid() {
     );
     throw new Error("PID_NOT_FOUND");
   }
-  return dnsMasqPid[0].pid;
 }
 
 function writeConfig({ domain, dhcpRange, staticHosts }) {
@@ -182,30 +182,36 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
   }
 
   if (NODE_ENV === "production") {
-    getDnsMasqPid().then(pid => {
-      logger.info(`restarting dnsmasq`);
-      const reloadCommand = getServiceManager("restart");
-      if (reloadCommand) {
-        exec(reloadCommand, (error, stdout, stderr) => {
-          if (error) {
-            logger.error(`unable to reload dnsmasq, ${stderr}`);
-            logSubscription(`unable to reload dnsmasq`, "error");
-            return;
-          }
-          getDnsMasqPid().then(newPid => {
-            if (newPid === pid) {
-              logger.error(`dnsmasq not reloaded, old pid stll around`);
-              logSubscription(
-                `dnsmasq not reloaded, old pid stll around`,
-                "warning"
-              );
+    getDnsMasqPid()
+      .then(pid => {
+        logger.info(`restarting dnsmasq`);
+        const reloadCommand = getServiceManager("restart");
+        if (reloadCommand) {
+          exec(reloadCommand, (error, stdout, stderr) => {
+            if (error) {
+              logger.error(`unable to reload dnsmasq, ${stderr}`);
+              logSubscription(`unable to reload dnsmasq`, "error");
+              return;
             }
-            logger.info(`restarted dnsmasq, new pid ${newPid}`);
-            logSubscription(`restarted dnsmasq`, "success");
+            getDnsMasqPid()
+              .then(newPid => {
+                if (newPid === pid) {
+                  logger.error(`dnsmasq not reloaded, old pid stll around`);
+                  logSubscription(
+                    `dnsmasq not reloaded, old pid stll around`,
+                    "warning"
+                  );
+                }
+                logger.info(`restarted dnsmasq, new pid ${newPid}`);
+                logSubscription(`restarted dnsmasq`, "success");
+              })
+              .catch(e =>
+                logSubscription(`error finding dnsmasq pid`, "error")
+              );
           });
-        });
-      }
-    });
+        }
+      })
+      .catch(e => logSubscription(`error finding dnsmasq pid`, "error"));
   }
 
   return config;
