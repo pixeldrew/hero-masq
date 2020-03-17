@@ -5,7 +5,11 @@ const { exec } = require("child_process");
 const logger = require("./logger");
 const find = require("find-process");
 const { debounce } = require("lodash");
-const logSubscription = require("../lib/log-subscription");
+const {
+  info: logInfo,
+  error: logError,
+  warning: logWarning
+} = require("../lib/log-subscription");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
@@ -140,10 +144,7 @@ async function getDnsMasqPid() {
     return dnsMasqPid[0].pid;
   } catch (e) {
     logger.warn("Unable to find dnsmasq pid. Is dnsmasq running?");
-    logSubscription(
-      "Unable to find dnsmasq pid. Is dnsmasq running?",
-      "warning"
-    );
+    logWarning("Unable to find dnsmasq pid. Is dnsmasq running?");
     throw new Error("PID_NOT_FOUND");
   }
 }
@@ -174,10 +175,10 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
           flag: "w"
         }
       );
-      logSubscription(`wrote config, ${confPath}`, "success");
+      logSuccess(`wrote config, ${confPath}`);
     } catch (e) {
       logger.warn(`unable to write config, ${confPath}`);
-      logSubscription(`unable to write config, ${confPath}`, "error");
+      logError(`unable to write config, ${confPath}`);
     }
   }
 
@@ -190,28 +191,23 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
           exec(reloadCommand, (error, stdout, stderr) => {
             if (error) {
               logger.error(`unable to reload dnsmasq, ${stderr}`);
-              logSubscription(`unable to reload dnsmasq`, "error");
+              logError(`unable to reload dnsmasq`);
               return;
             }
             getDnsMasqPid()
               .then(newPid => {
                 if (newPid === pid) {
                   logger.error(`dnsmasq not reloaded, old pid stll around`);
-                  logSubscription(
-                    `dnsmasq not reloaded, old pid stll around`,
-                    "warning"
-                  );
+                  logWarning(`dnsmasq not reloaded, old pid stll around`);
                 }
                 logger.info(`restarted dnsmasq, new pid ${newPid}`);
-                logSubscription(`restarted dnsmasq`, "success");
+                logSuccess(`restarted dnsmasq`);
               })
-              .catch(e =>
-                logSubscription(`error finding dnsmasq pid`, "error")
-              );
+              .catch(e => logError(`error finding dnsmasq pid`));
           });
         }
       })
-      .catch(e => logSubscription(`error finding dnsmasq pid`, "error"));
+      .catch(e => logError(`error finding dnsmasq pid`));
   }
 
   return config;
