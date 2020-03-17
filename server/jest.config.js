@@ -1,9 +1,10 @@
-// For a detailed explanation regarding each configuration property, visit:
-// https://jestjs.io/docs/en/configuration.html
-
 module.exports = {
-  name: "client",
-  displayName: "client",
+  name: "server",
+  displayName: "server",
+  rootDir: "./",
+
+  // For a detailed explanation regarding each configuration property, visit:
+  // https://jestjs.io/docs/en/configuration.html
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -26,20 +27,17 @@ module.exports = {
   collectCoverageFrom: [
     "**/*.{js,jsx}",
     "!**/node_modules/**",
-    "!**/vendor/**",
-    "!**.config.js",
-    "!./coverage/**",
-    "!./server/**"
+    "!**/vendor/**"
   ],
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
+  coverageDirectory: "<rootDir>/coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
   coveragePathIgnorePatterns: ["/node_modules/"],
 
   // A list of reporter names that Jest uses when writing coverage reports
-  coverageReporters: ["json", "text", "lcov", "clover"],
+  coverageReporters: ["json"],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: null,
@@ -126,20 +124,16 @@ module.exports = {
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
   setupFiles: ["<rootDir>/jest.setup.js"],
-  testPathIgnorePatterns: [
-    "<rootDir>/server/",
-    "<rootDir>/.next/",
-    "<rootDir>/node_modules/"
-  ],
+  testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ["@testing-library/jest-dom/extend-expect"],
+  // setupFilesAfterEnv: ["./node_modules/jest-enzyme/lib/index.js"],
 
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "jsdom"
+  testEnvironment: "node"
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},

@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const STATIC_HOSTS_QUERY = gql`
+export const STATIC_HOSTS_QUERY = gql`
   {
     staticHosts {
       id
