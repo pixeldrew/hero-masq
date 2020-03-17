@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitForElement } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { MockedProvider } from "@apollo/react-testing";
 
 // The component AND the query need to be exported
@@ -44,7 +44,7 @@ it("should render static hosts", async () => {
     </MockedProvider>
   );
 
-  const hostnameTextNode = await waitForElement(() => getByText("rancher"));
+  const hostnameTextNode = await waitFor(() => getByText("rancher"));
 
   expect(hostnameTextNode).toHaveTextContent("rancher");
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitForElement } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { MockedProvider } from "@apollo/react-testing";
 
 // The component AND the query need to be exported
@@ -56,7 +56,7 @@ it("should render leases", async () => {
     </MockedProvider>
   );
 
-  const ipTextNode = await waitForElement(() => getByText("10.137.0.110"));
+  const ipTextNode = await waitFor(() => getByText("10.137.0.110"));
 
   expect(ipTextNode).toHaveTextContent("10.137.0.110");
 });
