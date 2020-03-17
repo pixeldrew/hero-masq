@@ -7,7 +7,7 @@ import { formatDistance } from "date-fns";
 
 import { useInterval } from "../hooks/useInterval";
 
-const LEASES_UPDATED_SUBSCRIPTION = gql`
+export const LEASES_UPDATED_SUBSCRIPTION = gql`
   subscription leasesUpdated {
     leasesUpdated {
       dateUpdated
