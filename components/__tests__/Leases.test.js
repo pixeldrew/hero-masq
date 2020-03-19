@@ -32,7 +32,7 @@ const mocks = [
     result: {
       data: {
         leasesUpdated: {
-          dateUpdated: "2020-03-12T15:27:45.782Z"
+          dateUpdated: new Date().toJSON()
         }
       }
     }
@@ -58,5 +58,12 @@ it("should render leases", async () => {
 
   const ipTextNode = await waitFor(() => getByText("10.137.0.110"));
 
+  const lastUpdatedNode = await waitFor(() =>
+    getByText("Last Updated less than a minute ago")
+  );
+
   expect(ipTextNode).toHaveTextContent("10.137.0.110");
+  expect(lastUpdatedNode).toHaveTextContent(
+    "Last Updated less than a minute ago"
+  );
 });
