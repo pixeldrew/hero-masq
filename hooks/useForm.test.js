@@ -14,7 +14,12 @@ test("should handle form input with novalidation", () => {
 
   // test broken change handler
   act(() => {
-    expect(() => result.current.handleChange()()).toThrow();
+    expect(() =>
+      result.current.handleChange()({
+        persist: () => {},
+        target: { value: "blah" }
+      })
+    ).toThrow();
   });
 
   act(() => {
@@ -41,11 +46,15 @@ test("should handle form input with validation", () => {
       submitMock,
       {
         firstname: "",
-        lastname: ""
+        lastname: "",
+        title: ""
       },
       object({
         firstname: string().required("First Name is Required"),
-        lastname: string()
+        lastname: string(),
+        title: string()
+          .required("Title is Required")
+          .oneOf(["mr", "mrs", "ms"])
       })
     )
   );
@@ -55,9 +64,10 @@ test("should handle form input with validation", () => {
     result.current.handleSubmit();
   });
 
-  expect(result.current.errors.length).toBe(1);
+  expect(result.current.errors.length).toBe(2);
   expect(result.current.disable).toBeTruthy();
   expect(result.current.hasError("firstname")).toBeTruthy();
+  expect(result.current.hasError("title")).toBeTruthy();
 
   act(() => {
     result.current.handleChange({
@@ -66,8 +76,28 @@ test("should handle form input with validation", () => {
     });
   });
 
+  expect(result.current.hasError("firstname")).toBeFalsy();
+
+  // test invalid title
   act(() => {
-    expect(result.current.errors.length).toBe(0);
+    result.current.handleChange({
+      persist: () => {},
+      target: { id: "title", value: "dr" }
+    });
+  });
+
+  expect(result.current.errors.length).toBe(1);
+
+  act(() => {
+    result.current.handleChange({
+      persist: () => {},
+      target: { id: "title", value: "mr" }
+    });
+  });
+
+  expect(result.current.errors.length).toBe(0);
+
+  act(() => {
     result.current.handleSubmit();
   });
 
