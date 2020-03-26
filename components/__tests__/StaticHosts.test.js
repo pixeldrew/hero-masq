@@ -55,49 +55,51 @@ const mocks = [
   }
 ];
 
-it("should render loading state initially", async () => {
-  const { getByText } = render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <StaticHosts />
-    </MockedProvider>
-  );
+describe("StaticHosts", () => {
+  it("should render loading state initially", async () => {
+    const { getByText } = render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <StaticHosts />
+      </MockedProvider>
+    );
 
-  expect(getByText("Loading")).toHaveTextContent("Loading");
-});
-
-it("should render static hosts", async () => {
-  const { getByText } = render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <StaticHosts />
-    </MockedProvider>
-  );
-
-  const hostnameTextNode = await waitFor(() => getByText("rancher"));
-
-  expect(hostnameTextNode).toHaveTextContent("rancher");
-});
-
-it("should render and edit static hosts form", async () => {
-  const { getByText } = render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <StaticHosts />
-    </MockedProvider>
-  );
-
-  await waitFor(() => screen.getByLabelText(/IP Address/));
-
-  fireEvent.change(screen.getByLabelText(/IP Address/), {
-    target: { value: INPUT_HOST_STATIC_HOST.ip }
-  });
-  fireEvent.change(screen.getByLabelText(/Host Name/), {
-    target: { value: INPUT_HOST_STATIC_HOST.host }
-  });
-  fireEvent.change(screen.getByLabelText(/MAC Address/i), {
-    target: { value: INPUT_HOST_STATIC_HOST.mac }
+    expect(getByText("Loading")).toHaveTextContent("Loading");
   });
 
-  fireEvent.click(screen.getByText("Add"));
+  it("should render static hosts", async () => {
+    const { getByText } = render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <StaticHosts />
+      </MockedProvider>
+    );
 
-  const hostnameTextNode = await waitFor(() => getByText("norris"));
-  expect(hostnameTextNode).toHaveTextContent("norris");
+    const hostnameTextNode = await waitFor(() => getByText("rancher"));
+
+    expect(hostnameTextNode).toHaveTextContent("rancher");
+  });
+
+  it("should render and edit static hosts form", async () => {
+    const { getByText } = render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <StaticHosts />
+      </MockedProvider>
+    );
+
+    await waitFor(() => screen.getByLabelText(/IP Address/));
+
+    fireEvent.change(screen.getByLabelText(/IP Address/), {
+      target: { value: INPUT_HOST_STATIC_HOST.ip }
+    });
+    fireEvent.change(screen.getByLabelText(/Host Name/), {
+      target: { value: INPUT_HOST_STATIC_HOST.host }
+    });
+    fireEvent.change(screen.getByLabelText(/MAC Address/i), {
+      target: { value: INPUT_HOST_STATIC_HOST.mac }
+    });
+
+    fireEvent.click(screen.getByText("Add"));
+
+    const hostnameTextNode = await waitFor(() => getByText("norris"));
+    expect(hostnameTextNode).toHaveTextContent("norris");
+  });
 });

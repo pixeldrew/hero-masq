@@ -39,31 +39,33 @@ const mocks = [
   }
 ];
 
-it("should render loading state initially", async () => {
-  const { getByText } = render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <Leases />
-    </MockedProvider>
-  );
+describe("Leases", () => {
+  it("should render loading state initially", async () => {
+    const { getByText } = render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <Leases />
+      </MockedProvider>
+    );
 
-  expect(getByText("Fetching")).toHaveTextContent("Fetching");
-});
+    expect(getByText("Fetching")).toHaveTextContent("Fetching");
+  });
 
-it("should render leases", async () => {
-  const { getByText } = render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <Leases />
-    </MockedProvider>
-  );
+  it("should render leases", async () => {
+    const { getByText } = render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <Leases />
+      </MockedProvider>
+    );
 
-  const ipTextNode = await waitFor(() => getByText("10.137.0.110"));
+    const ipTextNode = await waitFor(() => getByText("10.137.0.110"));
 
-  const lastUpdatedNode = await waitFor(() =>
-    getByText("Last Updated less than a minute ago")
-  );
+    const lastUpdatedNode = await waitFor(() =>
+      getByText("Last Updated less than a minute ago")
+    );
 
-  expect(ipTextNode).toHaveTextContent("10.137.0.110");
-  expect(lastUpdatedNode).toHaveTextContent(
-    "Last Updated less than a minute ago"
-  );
+    expect(ipTextNode).toHaveTextContent("10.137.0.110");
+    expect(lastUpdatedNode).toHaveTextContent(
+      "Last Updated less than a minute ago"
+    );
+  });
 });

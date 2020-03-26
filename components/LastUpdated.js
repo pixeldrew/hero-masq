@@ -5,7 +5,7 @@ import gql from "graphql-tag";
 import { useSubscription } from "@apollo/react-hooks";
 import { formatDistance } from "date-fns";
 
-import { useInterval } from "../hooks/useInterval";
+import { useInterval } from "react-use";
 
 export const LEASES_UPDATED_SUBSCRIPTION = gql`
   subscription leasesUpdated {
