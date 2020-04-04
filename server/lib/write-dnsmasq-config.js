@@ -8,7 +8,8 @@ const { debounce } = require("lodash");
 const {
   info: logInfo,
   error: logError,
-  warning: logWarning
+  warning: logWarning,
+  success: logSuccess
 } = require("../lib/log-subscription");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];

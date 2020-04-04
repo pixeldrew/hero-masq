@@ -7,7 +7,7 @@ services:
     command: -s 172.31.0.33
     ports:
       - "67:67/udp"
-      - "67:67"
+      - "67:67/tcp"
     cap_add:
       - NET_ADMIN
 

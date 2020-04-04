@@ -26,6 +26,6 @@ RUN npm run build
 
 RUN ./scripts/configure.sh
 
-EXPOSE 3000 53/tcp 53/udp 67/udp
+EXPOSE 3000 53/tcp 53/udp
 ENV NODE_ENV="production";
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
