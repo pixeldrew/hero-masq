@@ -13,12 +13,16 @@ RUN mkdir -p /var/lib/dnsmasqd
 RUN mkdir -p /var/log/supervisor/
 RUN echo -e "ENABLED=1\nIGNORE_RESOLVCONF=yes" > /etc/default/dnsmasq
 
-ARG DNS
-ENV DNS=$DNS
+COPY package*.json ./
+
+RUN npm install --production
 
 COPY . .
 
-RUN npm install --production
+ARG DNS
+
+ENV DNS=$DNS
+RUN npm run build
 
 RUN ./scripts/configure.sh
 
