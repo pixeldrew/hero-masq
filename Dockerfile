@@ -1,11 +1,11 @@
-FROM mhart/alpine-node:12
+FROM node:alpine
 LABEL maintainer="drew@foe.hn"
 
 WORKDIR /usr/src/hero-masq
 
 # fetch dnsmasq
 RUN apk update \
-	&& apk --no-cache add dnsmasq supervisor nmap nmap-scripts
+	&& apk --no-cache add dnsmasq supervisor
 #configure dnsmasq
 RUN echo "conf-dir=/etc/dnsmasq.d,*.conf" > /etc/dnsmasq.conf
 RUN mkdir -p /etc/default/

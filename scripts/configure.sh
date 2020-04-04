@@ -16,6 +16,7 @@ dhcp-leasefile=/var/lib/dnsmasqd/dnsmasq.leases
 dhcp-name-match=set:wpad-ignore,wpad
 dhcp-ignore-names=tag:wpad-ignore
 stop-dns-rebind
+except-interface=nonexisting
 CONFIG
 
 cat << CONFIG > /etc/supervisord.conf
@@ -45,7 +46,7 @@ autorestart = true
 
 [program:hero-masq]
 directory = /usr/src/hero-masq
-command = /usr/bin/npm start
+command = /usr/local/bin/npm start
 stdout_logfile = /var/log/supervisor/%(program_name)s.log
 stderr_logfile = /var/log/supervisor/%(program_name)s_error.log
 CONFIG

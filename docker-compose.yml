@@ -1,7 +1,7 @@
 version: "3"
 services:
   dhcphelper:
-    image: fouadchamoun/dhcp-helper
+    build: ./dhcphelper
     restart: unless-stopped
     network_mode: "host"
     command: -s 172.31.0.33
@@ -12,14 +12,14 @@ services:
       - NET_ADMIN
 
   dnscrypt-proxy:
-    image: mattbodholdt/dnscrypt-proxy
+    image: melchor9000/dnscrypt-proxy
     restart: unless-stopped
     dns: 127.0.0.1
     networks:
       backend:
         ipv4_address: 172.31.0.32
 
-  hero-mask:
+  hero-masq:
     build: .
     ports:
       - "3000:3000/tcp"
