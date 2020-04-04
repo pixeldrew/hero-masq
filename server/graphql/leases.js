@@ -55,6 +55,7 @@ const renameDnsMasqId = lease => {
 const getLeases = () => {
   let leases = "";
   try {
+    fs.ensureFileSync(LEASE_FILE, "utf8");
     leases = fse.readFileSync(LEASE_FILE, "utf8");
   } catch {
     logger.warn("couldn't open lease file");
