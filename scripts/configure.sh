@@ -6,7 +6,7 @@ fi
 
 cat << CONFIG > /etc/dnsmasq.d/base.conf
 log-facility=-
-server=${DNS}
+server=${DNS}#5353
 domain-needed
 bogus-priv
 no-hosts
