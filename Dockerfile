@@ -5,7 +5,7 @@ WORKDIR /usr/src/hero-masq
 
 # fetch dnsmasq
 RUN apk update \
-	&& apk --no-cache add dnsmasq supervisor
+	&& apk --no-cache add dnsmasq supervisor procps
 #configure dnsmasq
 RUN echo "conf-dir=/etc/dnsmasq.d,*.conf" > /etc/dnsmasq.conf
 RUN mkdir -p /etc/default/
