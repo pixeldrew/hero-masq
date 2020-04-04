@@ -25,7 +25,8 @@ services:
     build: .
     ports:
       - "3000:3000/tcp"
-      - "53:53"
+      - "53:53/udp"
+      - "53:53/tcp"
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -37,6 +38,8 @@ services:
     depends_on:
       - dhcphelper
       - dnscrypt-proxy
+    environment:
+      DNS: 172.31.0.32
     networks:
       backend:
         ipv4_address: 172.31.0.33
