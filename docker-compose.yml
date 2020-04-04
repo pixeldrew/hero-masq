@@ -18,6 +18,8 @@ services:
     networks:
       backend:
         ipv4_address: 172.31.0.32
+    volumes:
+      - "./dnscrypt-proxy/config:/etc/dnscrypt-proxy"
 
   hero-masq:
     build: .
