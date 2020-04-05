@@ -1,26 +1,18 @@
 const path = require("path");
 const fse = require("fs-extra");
 const Netmask = require("netmask").Netmask;
-const { exec } = require("child_process");
 const logger = require("./logger");
-const find = require("find-process");
+const reloadDnsMasq = require("./dnsmasq").reloadDnsMasq;
+
 const { debounce } = require("lodash");
 const {
-  info: logInfo,
   error: logError,
-  warning: logWarning,
   success: logSuccess
 } = require("../lib/log-subscription");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
-const {
-  HOST_IP,
-  ROUTER_IP,
-  NODE_ENV,
-  DNSMASQ_CONF_LOCATION,
-  SERVICE_MANAGER
-} = process.env;
+const { HOST_IP, ROUTER_IP, NODE_ENV, DNSMASQ_CONF_LOCATION } = process.env;
 
 function convertExpiryToTTL(expiry) {
   // infinite is 0 TTL
@@ -117,7 +109,7 @@ function getDomain({ name } = { name: null }) {
 }
 
 function getConfPath() {
-  let confPath = "";
+  let confPath;
   if (NODE_ENV === "production") {
     confPath = path.resolve(DNSMASQ_CONF_LOCATION);
   } else {
@@ -126,35 +118,9 @@ function getConfPath() {
   return confPath;
 }
 
-function getServiceManager(method) {
-  if (SERVICE_MANAGER === "supervisor") {
-    return `"supervisorctl" ${method} dnsmasq`;
-  }
-
-  if (SERVICE_MANAGER === "service") {
-    return `"service" dnsmasq ${method}`;
-  }
-
-  return null;
-}
-
-async function getDnsMasqPid() {
-  let dnsMasqPid;
-  try {
-    dnsMasqPid = await find("name", "dnsmasq");
-    return dnsMasqPid[0].pid;
-  } catch (e) {
-    logger.warn("Unable to find dnsmasq pid. Is dnsmasq running?");
-    logWarning("Unable to find dnsmasq pid. Is dnsmasq running?");
-    throw new Error("PID_NOT_FOUND");
-  }
-}
-
 function writeConfig({ domain, dhcpRange, staticHosts }) {
   let config = "",
-    confPath = getConfPath(),
-    dhcpHosts = "",
-    hosts = "";
+    confPath = getConfPath();
 
   config += getDomain(domain);
   config += getDHCPRange(dhcpRange);
@@ -183,40 +149,11 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
     }
   }
 
-  if (NODE_ENV === "production") {
-    getDnsMasqPid()
-      .then(pid => {
-        logger.info(`restarting dnsmasq`);
-        const reloadCommand = getServiceManager("restart");
-        if (reloadCommand) {
-          exec(reloadCommand, (error, stdout, stderr) => {
-            if (error) {
-              logger.error(`unable to reload dnsmasq, ${stderr}`);
-              logError(`unable to reload dnsmasq`);
-              return;
-            }
-            getDnsMasqPid()
-              .then(newPid => {
-                if (newPid === pid) {
-                  logger.error(`dnsmasq not reloaded, old pid stll around`);
-                  logWarning(`dnsmasq not reloaded, old pid stll around`);
-                }
-                logger.info(`restarted dnsmasq, new pid ${newPid}`);
-                logSuccess(`restarted dnsmasq`);
-              })
-              .catch(e => logError(`error finding dnsmasq pid`));
-          });
-        }
-      })
-      .catch(e => logError(`error finding dnsmasq pid`));
-  }
+  reloadDnsMasq();
 
   return config;
 }
 
-/**
- * @return {string}
- */
 module.exports = {
   _writeConfig: writeConfig,
   writeConfig: debounce(writeConfig, 500),
