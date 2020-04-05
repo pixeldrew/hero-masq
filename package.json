@@ -1,6 +1,6 @@
 {
   "name": "hero-masq",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "dnsmasq config manager",
   "main": "index.js",
   "license": "MIT",
