@@ -1,25 +1,16 @@
 const path = require("path");
 const fse = require("fs-extra");
 const Netmask = require("netmask").Netmask;
+const logger = require("../logger");
 const { exec } = require("child_process");
-const logger = require("./logger");
-const find = require("find-process");
 const { debounce } = require("lodash");
-const {
-  info: logInfo,
-  error: logError,
-  warning: logWarning
-} = require("../lib/log-subscription");
+const { error: logError, success: logSuccess } = require("../log-subscription");
+const pubsub = require("../pubsub");
+const { DNSMASQ_CONFIG_SAVED_TOPIC } = require("../constants");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
-const {
-  HOST_IP,
-  ROUTER_IP,
-  NODE_ENV,
-  DNSMASQ_CONF_LOCATION,
-  SERVICE_MANAGER
-} = process.env;
+const { HOST_IP, ROUTER_IP, NODE_ENV, DNSMASQ_CONF_LOCATION } = process.env;
 
 function convertExpiryToTTL(expiry) {
   // infinite is 0 TTL
@@ -116,44 +107,26 @@ function getDomain({ name } = { name: null }) {
 }
 
 function getConfPath() {
-  let confPath = "";
+  let confPath;
   if (NODE_ENV === "production") {
     confPath = path.resolve(DNSMASQ_CONF_LOCATION);
   } else {
-    confPath = path.resolve(__dirname, "../../dnsmasq/conf");
+    confPath = path.resolve(__dirname, "../../../dnsmasq/conf");
   }
   return confPath;
 }
 
-function getServiceManager(method) {
-  if (SERVICE_MANAGER === "supervisor") {
-    return `"supervisorctl" ${method} dnsmasq`;
-  }
-
-  if (SERVICE_MANAGER === "service") {
-    return `"service" dnsmasq ${method}`;
-  }
-
-  return null;
+function writeBaseConfig() {
+  const configureDnsMasqScript = "./scripts/configure-dnsmasq.sh";
+  exec(configureDnsMasqScript, (error, stdout, stderr) => {
+    logger.info(`wrote base config, ${configureDnsMasqScript}`);
+    pubsub.publish(DNSMASQ_CONFIG_SAVED_TOPIC);
+  });
 }
 
-async function getDnsMasqPid() {
-  let dnsMasqPid;
-  try {
-    dnsMasqPid = await find("name", "dnsmasq");
-    return dnsMasqPid[0].pid;
-  } catch (e) {
-    logger.warn("Unable to find dnsmasq pid. Is dnsmasq running?");
-    logWarning("Unable to find dnsmasq pid. Is dnsmasq running?");
-    throw new Error("PID_NOT_FOUND");
-  }
-}
-
-function writeConfig({ domain, dhcpRange, staticHosts }) {
+function config({ domain, dhcpRange, staticHosts }) {
   let config = "",
-    confPath = getConfPath(),
-    dhcpHosts = "",
-    hosts = "";
+    confPath = getConfPath();
 
   config += getDomain(domain);
   config += getDHCPRange(dhcpRange);
@@ -182,58 +155,32 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
     }
   }
 
-  if (NODE_ENV === "production") {
-    getDnsMasqPid()
-      .then(pid => {
-        logger.info(`restarting dnsmasq`);
-        const reloadCommand = getServiceManager("restart");
-        if (reloadCommand) {
-          exec(reloadCommand, (error, stdout, stderr) => {
-            if (error) {
-              logger.error(`unable to reload dnsmasq, ${stderr}`);
-              logError(`unable to reload dnsmasq`);
-              return;
-            }
-            getDnsMasqPid()
-              .then(newPid => {
-                if (newPid === pid) {
-                  logger.error(`dnsmasq not reloaded, old pid stll around`);
-                  logWarning(`dnsmasq not reloaded, old pid stll around`);
-                }
-                logger.info(`restarted dnsmasq, new pid ${newPid}`);
-                logSuccess(`restarted dnsmasq`);
-              })
-              .catch(e => logError(`error finding dnsmasq pid`));
-          });
-        }
-      })
-      .catch(e => logError(`error finding dnsmasq pid`));
-  }
+  pubsub.publish(DNSMASQ_CONFIG_SAVED_TOPIC);
 
   return config;
 }
 
-/**
- * @return {string}
- */
-module.exports = {
-  _writeConfig: writeConfig,
-  writeConfig: debounce(writeConfig, 500),
-  getConfig: () => {
-    const filename = path.resolve(getConfPath(), "hero-masq.json");
-    try {
-      return JSON.parse(
-        fse.readFileSync(filename, {
-          encoding: "utf8"
-        })
-      );
-    } catch (e) {
-      logger.warn(`unable to open config, ${filename}`);
-      return {
-        domain: { name: "" },
-        staticHosts: [],
-        dhcpRange: { startIp: "", endIp: "", leaseExpiry: "" }
-      };
-    }
+function getConfig() {
+  const filename = path.resolve(getConfPath(), "hero-masq.json");
+  try {
+    return JSON.parse(
+      fse.readFileSync(filename, {
+        encoding: "utf8"
+      })
+    );
+  } catch (e) {
+    logger.warn(`unable to open config, ${filename}`);
+    return {
+      domain: { name: "" },
+      staticHosts: [],
+      dhcpRange: { startIp: "", endIp: "", leaseExpiry: "" }
+    };
   }
+}
+
+module.exports = {
+  writeBaseConfig,
+  _writeConfig: config,
+  writeConfig: debounce(config, 500),
+  getConfig
 };

@@ -29,7 +29,7 @@ export const STATIC_HOSTS_QUERY = gql`
   }
 `;
 
-const ADD_STATIC_HOST = gql`
+export const ADD_STATIC_HOST = gql`
   mutation AddStaticHost($staticHost: StaticHostInput!) {
     addStaticHost(staticHost: $staticHost) {
       id
@@ -42,7 +42,7 @@ const ADD_STATIC_HOST = gql`
   }
 `;
 
-const UPDATE_STATIC_HOST = gql`
+export const UPDATE_STATIC_HOST = gql`
   mutation UpdateStaticHost($id: ID!, $staticHost: StaticHostInput!) {
     updateStaticHost(id: $id, staticHost: $staticHost) {
       id
@@ -55,7 +55,7 @@ const UPDATE_STATIC_HOST = gql`
   }
 `;
 
-const DELETE_STATIC_HOST = gql`
+export const DELETE_STATIC_HOST = gql`
   mutation DeleteStaticHost($id: ID!) {
     deleteStaticHost(id: $id)
   }

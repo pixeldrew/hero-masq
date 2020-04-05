@@ -1,4 +1,4 @@
-const { _writeConfig: writeConfig } = require("../write-dnsmasq-config");
+const { _writeConfig: writeConfig } = require("../config");
 
 const domain = { name: "testdomain.com" };
 const dhcpRange = {
@@ -38,7 +38,7 @@ host-record=blah.testdomain.com,192.168.0.5,14400
 dhcp-host=buck,192.168.0.6,8h
 `;
 
-describe("write-dnsmasq-config", () => {
+describe("dnsmasq.config", () => {
   test("write dnsmasq config", () => {
     expect(
       writeConfig({

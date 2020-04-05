@@ -13,3 +13,4 @@ module.exports.LEASES_UPDATED_TOPIC = "leases_updated";
 module.exports.CONFIG_DOMAIN_UPDATED = "config_domain_updated";
 module.exports.CONFIG_STATIC_HOSTS_UPDATED = "config_static_hosts_updated";
 module.exports.CONFIG_DHCP_RANGE_UPDATED = "config_dhcp_range_updated";
+module.exports.DNSMASQ_CONFIG_SAVED_TOPIC = "dnsmasq_config_saved";

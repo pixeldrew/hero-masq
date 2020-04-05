@@ -1,6 +1,6 @@
 {
   "name": "hero-masq",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "dnsmasq config manager",
   "main": "index.js",
   "license": "MIT",
@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "nodemon server",
     "build": "next build",
-    "postinstall": "npm run clean && npm run build",
+    "prepare": "npm run clean && npm run build",
     "start": "NODE_ENV=production node server",
     "test": "NODE_ENV=test jest --projects ./ server",
     "clean": "rimraf .next/ coverage/"
@@ -52,6 +52,7 @@
     "apollo-server-express": "^2.11.0",
     "apollo-utilities": "^1.3.3",
     "body-parser": "^1.19.0",
+    "chokidar": "^3.3.1",
     "cookie-parser": "^1.4.5",
     "date-fns": "^2.11.0",
     "dnsmasq-leases": "^0.1.2",
@@ -82,6 +83,7 @@
     "react-apollo": "^3.1.3",
     "react-dom": "^16.13.0",
     "react-text-mask": "^5.4.3",
+    "react-use": "^13.27.0",
     "subscriptions-transport-ws": "^0.9.16",
     "winston": "^3.2.1",
     "yup": "^0.28.3"

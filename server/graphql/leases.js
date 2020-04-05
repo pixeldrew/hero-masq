@@ -2,7 +2,8 @@ const { gql } = require("apollo-server-express");
 const fse = require("fs-extra");
 const dnsmasqLeases = require("dnsmasq-leases");
 const logger = require("../lib/logger");
-const logSubscription = require("../lib/log-subscription");
+const chokidar = require("chokidar");
+const { info: logInfo } = require("../lib/log-subscription");
 
 const pubsub = require("../lib/pubsub");
 const { LEASE_FILE, LEASES_UPDATED_TOPIC } = require("./../lib/constants");
@@ -55,6 +56,7 @@ const renameDnsMasqId = lease => {
 const getLeases = () => {
   let leases = "";
   try {
+    fse.ensureFileSync(LEASE_FILE, "utf8");
     leases = fse.readFileSync(LEASE_FILE, "utf8");
   } catch {
     logger.warn("couldn't open lease file");
@@ -66,14 +68,12 @@ const getLeases = () => {
 module.exports.resolvers = () => {
   let leases = getLeases();
 
-  fse.watch(LEASE_FILE, { encoding: "utf-8" }, eventType => {
-    if (eventType === "change") {
-      leases = getLeases();
-      pubsub.publish(LEASES_UPDATED_TOPIC, {
-        leasesUpdated: { dateUpdated: new Date() }
-      });
-      logSubscription("leases updated");
-    }
+  chokidar.watch(LEASE_FILE, { awaitWriteFinish: true }).on("change", path => {
+    leases = getLeases();
+    pubsub.publish(LEASES_UPDATED_TOPIC, {
+      leasesUpdated: { dateUpdated: new Date() }
+    });
+    logInfo("leases updated");
   });
 
   return {
