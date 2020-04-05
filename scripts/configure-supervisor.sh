@@ -1,24 +1,5 @@
 #!/usr/bin/env sh
 
-if [ -z "${DNS}" ] ; then
-	DNS="172.31.0.32"
-fi
-
-cat << CONFIG > /etc/dnsmasq.d/base.conf
-log-facility=-
-server=${DNS}#5353
-domain-needed
-bogus-priv
-no-hosts
-no-resolv
-expand-hosts
-dhcp-leasefile=/var/lib/dnsmasqd/dnsmasq.leases
-dhcp-name-match=set:wpad-ignore,wpad
-dhcp-ignore-names=tag:wpad-ignore
-stop-dns-rebind
-except-interface=nonexisting
-CONFIG
-
 cat << CONFIG > /etc/supervisord.conf
 [supervisord]
 nodaemon = true
@@ -50,5 +31,3 @@ command = /usr/local/bin/npm start
 stdout_logfile = /var/log/supervisor/%(program_name)s.log
 stderr_logfile = /var/log/supervisor/%(program_name)s_error.log
 CONFIG
-
-

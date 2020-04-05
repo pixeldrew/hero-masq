@@ -1,7 +1,7 @@
 const { merge } = require("lodash");
 const { gql } = require("apollo-server-express");
 
-const { getConfig, writeConfig } = require("./lib/write-dnsmasq-config");
+const { getConfig, writeConfig } = require("./lib/dnsmasq");
 const pubsub = require("./lib/pubsub");
 const {
   CONFIG_DOMAIN_UPDATED,
