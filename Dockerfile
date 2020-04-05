@@ -21,8 +21,14 @@ COPY . .
 
 RUN npm run build
 
+RUN chmod +x ./scripts/*.sh
 RUN ./scripts/configure-supervisor.sh
 
-EXPOSE 3000 53/tcp 53/udp
-ENV NODE_ENV="production";
+ENV IN_DOCKER=true
+ENV SERVICE_MANAGER=supervisor
+ENV NODE_ENV=production
+ENV DNSMASQ_CONF_LOCATION="/etc/dnsmasq.d/"
+
+EXPOSE 3000 53/tcp 53/udp 67/tcp 67/udp
+
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

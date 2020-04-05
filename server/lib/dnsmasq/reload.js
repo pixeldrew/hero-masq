@@ -65,6 +65,4 @@ function reloadDnsMasq() {
   }
 }
 
-pubsub.subscribe(DNSMASQ_CONFIG_SAVED_TOPIC, reloadDnsMasq);
-
 module.exports = reloadDnsMasq;

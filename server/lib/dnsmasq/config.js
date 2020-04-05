@@ -111,14 +111,16 @@ function getConfPath() {
   if (NODE_ENV === "production") {
     confPath = path.resolve(DNSMASQ_CONF_LOCATION);
   } else {
-    confPath = path.resolve(__dirname, "../../dnsmasq/conf");
+    confPath = path.resolve(__dirname, "../../../dnsmasq/conf");
   }
   return confPath;
 }
 
 function writeBaseConfig() {
   const configureDnsMasqScript = "./scripts/configure-dnsmasq.sh";
-  exec(configureDnsMasqScript, (error, stdout, stderr) => {});
+  exec(configureDnsMasqScript, (error, stdout, stderr) => {
+    logger.warn(`wrote base config, ${configureDnsMasqScript}`);
+  });
 }
 
 function config({ domain, dhcpRange, staticHosts }) {
@@ -157,24 +159,27 @@ function config({ domain, dhcpRange, staticHosts }) {
   return config;
 }
 
+function getConfig() {
+  const filename = path.resolve(getConfPath(), "hero-masq.json");
+  try {
+    return JSON.parse(
+      fse.readFileSync(filename, {
+        encoding: "utf8"
+      })
+    );
+  } catch (e) {
+    logger.warn(`unable to open config, ${filename}`);
+    return {
+      domain: { name: "" },
+      staticHosts: [],
+      dhcpRange: { startIp: "", endIp: "", leaseExpiry: "" }
+    };
+  }
+}
+
 module.exports = {
+  writeBaseConfig,
   _writeConfig: config,
   writeConfig: debounce(config, 500),
-  getConfig: () => {
-    const filename = path.resolve(getConfPath(), "hero-masq.json");
-    try {
-      return JSON.parse(
-        fse.readFileSync(filename, {
-          encoding: "utf8"
-        })
-      );
-    } catch (e) {
-      logger.warn(`unable to open config, ${filename}`);
-      return {
-        domain: { name: "" },
-        staticHosts: [],
-        dhcpRange: { startIp: "", endIp: "", leaseExpiry: "" }
-      };
-    }
-  }
+  getConfig
 };

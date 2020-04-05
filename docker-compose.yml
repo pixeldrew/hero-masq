@@ -22,7 +22,7 @@ services:
       - "./dnscrypt-proxy/config:/etc/dnscrypt-proxy"
 
   hero-masq:
-    build: .
+    image: pixeldrew/hero-masq
     ports:
       - "3000:3000/tcp"
       - "53:53/udp"
