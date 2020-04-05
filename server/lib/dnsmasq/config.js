@@ -1,14 +1,12 @@
 const path = require("path");
 const fse = require("fs-extra");
 const Netmask = require("netmask").Netmask;
-const logger = require("./logger");
-const reloadDnsMasq = require("./dnsmasq").reloadDnsMasq;
-
+const logger = require("../logger");
+const { exec } = require("child_process");
 const { debounce } = require("lodash");
-const {
-  error: logError,
-  success: logSuccess
-} = require("../lib/log-subscription");
+const { error: logError, success: logSuccess } = require("../log-subscription");
+const pubsub = require("../pubsub");
+const { DNSMASQ_CONFIG_SAVED_TOPIC } = require("../constants");
 
 const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
 
@@ -118,7 +116,12 @@ function getConfPath() {
   return confPath;
 }
 
-function writeConfig({ domain, dhcpRange, staticHosts }) {
+function writeBaseConfig() {
+  const configureDnsMasqScript = "./scripts/configure-dnsmasq.sh";
+  exec(configureDnsMasqScript, (error, stdout, stderr) => {});
+}
+
+function config({ domain, dhcpRange, staticHosts }) {
   let config = "",
     confPath = getConfPath();
 
@@ -149,14 +152,14 @@ function writeConfig({ domain, dhcpRange, staticHosts }) {
     }
   }
 
-  reloadDnsMasq();
+  pubsub.publish(DNSMASQ_CONFIG_SAVED_TOPIC);
 
   return config;
 }
 
 module.exports = {
-  _writeConfig: writeConfig,
-  writeConfig: debounce(writeConfig, 500),
+  _writeConfig: config,
+  writeConfig: debounce(config, 500),
   getConfig: () => {
     const filename = path.resolve(getConfPath(), "hero-masq.json");
     try {

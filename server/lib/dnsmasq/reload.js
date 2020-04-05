@@ -1,11 +1,13 @@
 const find = require("find-process");
 const { exec } = require("child_process");
-const logger = require("./logger");
+const logger = require("../logger");
+const pubsub = require("../pubsub");
+const { DNSMASQ_CONFIG_SAVED_TOPIC } = require("../constants");
 const {
   error: logError,
   warning: logWarning,
   success: logSuccess
-} = require("../lib/log-subscription");
+} = require("../log-subscription");
 
 const { NODE_ENV, SERVICE_MANAGER } = process.env;
 
@@ -63,6 +65,6 @@ function reloadDnsMasq() {
   }
 }
 
-module.exports = {
-  reloadDnsMasq
-};
+pubsub.subscribe(DNSMASQ_CONFIG_SAVED_TOPIC, reloadDnsMasq);
+
+module.exports = reloadDnsMasq;
