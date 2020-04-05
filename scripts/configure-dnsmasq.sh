@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
 
 if [ -z "${DNS}" ] ; then
-	DNS="172.31.0.32"
+	DNS="172.31.0.32#5353"
 fi
 
 if [ ! -f "${DNSMASQ_CONF_LOCATION}/base.conf" ] ; then
 
 cat << CONFIG > ${DNSMASQ_CONF_LOCATION}/base.conf
 log-facility=-
-server=${DNS}#5353
+server=${DNS}
 domain-needed
 bogus-priv
 no-hosts

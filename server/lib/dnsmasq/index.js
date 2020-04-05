@@ -7,7 +7,7 @@ const { IN_DOCKER } = process.env;
 
 pubsub.subscribe(DNSMASQ_CONFIG_SAVED_TOPIC, reload);
 
-if (IN_DOCKER === "true") {
+if (IN_DOCKER && IN_DOCKER === "true") {
   writeBaseConfig();
 }
 

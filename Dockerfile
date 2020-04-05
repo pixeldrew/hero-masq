@@ -28,6 +28,7 @@ ENV IN_DOCKER=true
 ENV SERVICE_MANAGER=supervisor
 ENV NODE_ENV=production
 ENV DNSMASQ_CONF_LOCATION="/etc/dnsmasq.d/"
+ENV DNS=1.1.1.1
 
 EXPOSE 3000 53/tcp 53/udp 67/tcp 67/udp
 
