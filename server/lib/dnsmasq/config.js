@@ -119,7 +119,8 @@ function getConfPath() {
 function writeBaseConfig() {
   const configureDnsMasqScript = "./scripts/configure-dnsmasq.sh";
   exec(configureDnsMasqScript, (error, stdout, stderr) => {
-    logger.warn(`wrote base config, ${configureDnsMasqScript}`);
+    logger.info(`wrote base config, ${configureDnsMasqScript}`);
+    pubsub.publish(DNSMASQ_CONFIG_SAVED_TOPIC);
   });
 }
 
