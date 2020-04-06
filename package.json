@@ -115,7 +115,7 @@
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "prop-types": "^15.7.2",
-    "react-test-renderer": "^16.13.0",
+    "react-test-renderer": "^16.13.1",
     "rimraf": "^3.0.2"
   }
 }
