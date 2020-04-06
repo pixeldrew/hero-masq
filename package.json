@@ -68,7 +68,7 @@
     "graphql-tag": "^2.10.3",
     "graphql-tools": "^4.0.7",
     "graphql-validated-types": "^2.7.0",
-    "helmet": "^3.21.3",
+    "helmet": "^3.22.0",
     "isomorphic-unfetch": "^3.0.0",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
