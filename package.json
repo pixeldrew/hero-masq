@@ -93,7 +93,7 @@
     "@babel/core": "^7.8.7",
     "@babel/preset-env": "^7.9.0",
     "@babel/preset-react": "^7.8.3",
-    "@babel/runtime": "^7.8.7",
+    "@babel/runtime": "^7.9.2",
     "@babel/runtime-corejs2": "^7.8.7",
     "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "^10.0.1",
