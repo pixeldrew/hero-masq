@@ -54,7 +54,7 @@
     "body-parser": "^1.19.0",
     "chokidar": "^3.3.1",
     "cookie-parser": "^1.4.5",
-    "date-fns": "^2.11.0",
+    "date-fns": "^2.11.1",
     "dnsmasq-leases": "^0.1.2",
     "dotenv-defaults": "^1.1.1",
     "express": "^4.17.1",
