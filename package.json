@@ -52,7 +52,7 @@
     "apollo-server-express": "^2.12.0",
     "apollo-utilities": "^1.3.3",
     "body-parser": "^1.19.0",
-    "chokidar": "^3.3.1",
+    "chokidar": "^3.4.1",
     "cookie-parser": "^1.4.5",
     "date-fns": "^2.12.0",
     "dnsmasq-leases": "^0.1.2",
