@@ -53,7 +53,7 @@ class StaticHosts {
   constructor(initialHosts) {
     this.#hosts = initialHosts.map((k, i) => ({
       ...k,
-      id: getStaticHostKey(i)
+      id: getStaticHostKey(i),
     }));
     this.#keySeed = this.#hosts.length;
   }
@@ -67,7 +67,7 @@ class StaticHosts {
   }
 
   get(key) {
-    let idx = this.#hosts.findIndex(host => host.id === key);
+    let idx = this.#hosts.findIndex((host) => host.id === key);
     return this.#hosts[idx];
   }
 
@@ -83,7 +83,7 @@ class StaticHosts {
   }
 
   del(key) {
-    const idx = this.#hosts.findIndex(host => host.id === key);
+    const idx = this.#hosts.findIndex((host) => host.id === key);
     if (idx + 1) {
       this.#hosts.splice(idx, 1);
 
@@ -93,11 +93,11 @@ class StaticHosts {
   }
 
   update(id, data) {
-    const idx = this.#hosts.findIndex(host => host.id === id);
+    const idx = this.#hosts.findIndex((host) => host.id === id);
     if (this.#hosts[idx]) {
       this.#hosts[idx] = {
         id,
-        ...data
+        ...data,
       };
 
       return this.#hosts[idx];
@@ -107,7 +107,7 @@ class StaticHosts {
   }
 
   valueOf() {
-    return this.#hosts.map(v => {
+    return this.#hosts.map((v) => {
       // strip id from staticHost
       let { id, ...staticHost } = v;
       return staticHost;
@@ -115,12 +115,12 @@ class StaticHosts {
   }
 }
 
-module.exports.resolvers = initialData => {
+module.exports.resolvers = (initialData) => {
   const staticHosts = new StaticHosts(initialData);
 
   return {
     Query: {
-      staticHosts: () => staticHosts.all
+      staticHosts: () => staticHosts.all,
     },
     Mutation: {
       addStaticHost: (parent, { staticHost }) => {
@@ -139,7 +139,7 @@ module.exports.resolvers = initialData => {
           pubsub.publish(CONFIG_STATIC_HOSTS_UPDATED, staticHosts.valueOf());
           return id;
         }
-      }
-    }
+      },
+    },
   };
 };

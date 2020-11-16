@@ -19,12 +19,12 @@ module.exports.typeDef = gql`
   }
 `;
 
-module.exports.resolvers = initialData => {
+module.exports.resolvers = (initialData) => {
   let domain = { ...initialData };
 
   return {
     Query: {
-      domain: () => domain
+      domain: () => domain,
     },
     Mutation: {
       saveDomain: (parent, args) => {
@@ -33,7 +33,7 @@ module.exports.resolvers = initialData => {
         pubsub.publish(CONFIG_DOMAIN_UPDATED, domain);
 
         return domain;
-      }
-    }
+      },
+    },
   };
 };

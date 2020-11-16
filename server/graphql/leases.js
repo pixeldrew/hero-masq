@@ -42,7 +42,7 @@ module.exports.typeDef = gql`
   }
 `;
 
-const renameDnsMasqId = lease => {
+const renameDnsMasqId = (lease) => {
   let result = ["timestamp", "mac", "ip", "host"].reduce((obj, key) => {
     obj[key] = lease[key];
     return obj;
@@ -68,13 +68,15 @@ const getLeases = () => {
 module.exports.resolvers = () => {
   let leases = getLeases();
 
-  chokidar.watch(LEASE_FILE, { awaitWriteFinish: true }).on("change", path => {
-    leases = getLeases();
-    pubsub.publish(LEASES_UPDATED_TOPIC, {
-      leasesUpdated: { dateUpdated: new Date() }
+  chokidar
+    .watch(LEASE_FILE, { awaitWriteFinish: true })
+    .on("change", (path) => {
+      leases = getLeases();
+      pubsub.publish(LEASES_UPDATED_TOPIC, {
+        leasesUpdated: { dateUpdated: new Date() },
+      });
+      logInfo("leases updated");
     });
-    logInfo("leases updated");
-  });
 
   return {
     DateTime,
@@ -83,20 +85,20 @@ module.exports.resolvers = () => {
         const keys = Object.keys(args);
 
         if (keys.length > 0) {
-          return leases.filter(l => {
+          return leases.filter((l) => {
             let found = false;
-            keys.forEach(k => (found = found || l[k] === args[k]));
+            keys.forEach((k) => (found = found || l[k] === args[k]));
             return found;
           });
         } else {
           return leases;
         }
-      }
+      },
     },
     Subscription: {
       leasesUpdated: {
-        subscribe: () => pubsub.asyncIterator([LEASES_UPDATED_TOPIC])
-      }
-    }
+        subscribe: () => pubsub.asyncIterator([LEASES_UPDATED_TOPIC]),
+      },
+    },
   };
 };

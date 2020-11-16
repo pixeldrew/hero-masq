@@ -9,7 +9,7 @@ describe("useForm", () => {
     const { result } = renderHook(() =>
       useForm(submitMock, {
         firstname: "",
-        lastname: ""
+        lastname: "",
       })
     );
 
@@ -18,7 +18,7 @@ describe("useForm", () => {
       expect(() =>
         result.current.handleChange()({
           persist: () => {},
-          target: { value: "blah" }
+          target: { value: "blah" },
         })
       ).toThrow();
     });
@@ -26,7 +26,7 @@ describe("useForm", () => {
     act(() => {
       result.current.handleChange({
         persist: () => {},
-        target: { id: "firstname", value: "bill" }
+        target: { id: "firstname", value: "bill" },
       });
     });
 
@@ -48,14 +48,14 @@ describe("useForm", () => {
         {
           firstname: "",
           lastname: "",
-          title: ""
+          title: "",
         },
         object({
           firstname: string().required("First Name is Required"),
           lastname: string(),
           title: string()
             .required("Title is Required")
-            .oneOf(["mr", "mrs", "ms"])
+            .oneOf(["mr", "mrs", "ms"]),
         })
       )
     );
@@ -73,7 +73,7 @@ describe("useForm", () => {
     act(() => {
       result.current.handleChange({
         persist: () => {},
-        target: { id: "firstname", value: "bill" }
+        target: { id: "firstname", value: "bill" },
       });
     });
 
@@ -83,7 +83,7 @@ describe("useForm", () => {
     act(() => {
       result.current.handleChange({
         persist: () => {},
-        target: { id: "title", value: "dr" }
+        target: { id: "title", value: "dr" },
       });
     });
 
@@ -92,7 +92,7 @@ describe("useForm", () => {
     act(() => {
       result.current.handleChange({
         persist: () => {},
-        target: { id: "title", value: "mr" }
+        target: { id: "title", value: "mr" },
       });
     });
 

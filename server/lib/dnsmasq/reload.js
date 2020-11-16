@@ -6,7 +6,7 @@ const { DNSMASQ_CONFIG_SAVED_TOPIC } = require("../constants");
 const {
   error: logError,
   warning: logWarning,
-  success: logSuccess
+  success: logSuccess,
 } = require("../log-subscription");
 
 const { NODE_ENV, SERVICE_MANAGER } = process.env;
@@ -38,7 +38,7 @@ async function getDnsMasqPid() {
 function reloadDnsMasq() {
   if (NODE_ENV === "production") {
     getDnsMasqPid()
-      .then(pid => {
+      .then((pid) => {
         logger.info(`restarting dnsmasq`);
         const reloadCommand = getServiceManager("restart");
         if (reloadCommand) {
@@ -49,7 +49,7 @@ function reloadDnsMasq() {
               return;
             }
             getDnsMasqPid()
-              .then(newPid => {
+              .then((newPid) => {
                 if (newPid === pid) {
                   logger.error(`dnsmasq not reloaded, old pid stll around`);
                   logWarning(`dnsmasq not reloaded, old pid stll around`);
