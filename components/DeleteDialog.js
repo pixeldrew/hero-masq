@@ -50,5 +50,5 @@ export function DeleteDialog({ okHandler }) {
 }
 
 DeleteDialog.propTypes = {
-  okHandler: PropTypes.func
+  okHandler: PropTypes.func,
 };

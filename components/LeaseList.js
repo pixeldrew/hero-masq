@@ -10,10 +10,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   table: {
-    minWidth: 650
-  }
+    minWidth: 650,
+  },
 }));
 
 export function LeaseList({ leases }) {
@@ -48,5 +48,5 @@ export function LeaseList({ leases }) {
 }
 
 LeaseList.propTypes = {
-  leases: PropTypes.array.isRequired
+  leases: PropTypes.array.isRequired,
 };

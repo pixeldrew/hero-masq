@@ -13,26 +13,26 @@ import IPMaskedInput from "./IPMaskedInput";
 import { LEASE_EXPIRATIONS, IP_REGEX } from "../lib/constants";
 import { object, string } from "yup";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   button: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   container: {
     display: "flex",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
   },
   textField: {
     marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
   menu: {
-    width: 200
-  }
+    width: 200,
+  },
 }));
 
 export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
   const { values, handleChange, handleSubmit, hasError, resetForm } = useForm(
-    values => {
+    (values) => {
       submitForm(values);
       resetForm();
     },
@@ -42,7 +42,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
       ip: "",
       host: "",
       client: "",
-      leaseExpiry: "24h"
+      leaseExpiry: "24h",
     },
     object({
       id: string(),
@@ -50,7 +50,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
       mac: string(),
       host: string(),
       client: string(),
-      leaseExpiry: string()
+      leaseExpiry: string(),
     })
   );
 
@@ -74,7 +74,7 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
           margin="normal"
           variant="outlined"
           InputProps={{
-            inputComponent: IPMaskedInput
+            inputComponent: IPMaskedInput,
           }}
         />
         <TextField
@@ -121,12 +121,12 @@ export function StaticHostForm({ submitForm, currentHost, edit, cancelForm }) {
           variant="outlined"
           SelectProps={{
             MenuProps: {
-              className: classes.menu
-            }
+              className: classes.menu,
+            },
           }}
           margin="normal"
         >
-          {LEASE_EXPIRATIONS.map(option => (
+          {LEASE_EXPIRATIONS.map((option) => (
             <MenuItem key={option.value} value={option.value}>
               {option.label}
             </MenuItem>
@@ -161,5 +161,5 @@ StaticHostForm.propTypes = {
   submitForm: PropTypes.func,
   cancelForm: PropTypes.func,
   currentHost: PropTypes.object,
-  edit: PropTypes.bool
+  edit: PropTypes.bool,
 };

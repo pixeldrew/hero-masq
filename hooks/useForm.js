@@ -4,12 +4,12 @@ const validateById = (id, value, values, schema, setErrors) => {
   if (schema) {
     try {
       schema.validateSyncAt(id, { ...values, [id]: value });
-      setErrors(oldErrors => [...oldErrors.filter(e => e.id !== id)]);
+      setErrors((oldErrors) => [...oldErrors.filter((e) => e.id !== id)]);
     } catch ({ errors }) {
       const msgs = Array.isArray(errors) ? errors[0] : errors;
-      setErrors(oldErrors => [
-        ...oldErrors.filter(e => e.id !== id),
-        { id, msgs }
+      setErrors((oldErrors) => [
+        ...oldErrors.filter((e) => e.id !== id),
+        { id, msgs },
       ]);
     }
   }
@@ -31,7 +31,7 @@ const validateDefault = (defaultValues, schema) => {
   return foundErrors;
 };
 
-const validateForm = errors => errors.length > 0;
+const validateForm = (errors) => errors.length > 0;
 
 function useForm(callback, defaultValues, schema) {
   const [values, setValues] = useState(defaultValues);
@@ -50,18 +50,18 @@ function useForm(callback, defaultValues, schema) {
    * updates entry in value collection by id and validates
    */
   const changeValue = useCallback(
-    function(id, value) {
+    function (id, value) {
       if (!id) {
         throw new Error(
           "no name provided to handleChange. input must have either a name or an id"
         );
       }
 
-      setValues(oldValues => {
+      setValues((oldValues) => {
         validateValue(id, value, oldValues);
         return {
           ...oldValues,
-          [id]: value
+          [id]: value,
         };
       });
     },
@@ -72,14 +72,14 @@ function useForm(callback, defaultValues, schema) {
    * handles input fields with an explicit name or uses the name attribute on the target
    */
   const handleChange = useCallback(
-    function(event) {
+    function (event) {
       if (typeof event === "object") {
         event.persist();
         const id = event.target.name || event.target.id;
         const value = event.target.value;
         changeValue(id, value);
       } else {
-        return function(e) {
+        return function (e) {
           e.persist();
           const id = event;
           const { value } = e.target;
@@ -91,12 +91,12 @@ function useForm(callback, defaultValues, schema) {
   );
 
   const hasError = useCallback(
-    id => showErrors && errors.findIndex(e => e.id === id) >= 0,
+    (id) => showErrors && errors.findIndex((e) => e.id === id) >= 0,
     [errors, showErrors]
   );
 
   const handleSubmit = useCallback(
-    function(event) {
+    function (event) {
       if (event) event.preventDefault();
 
       if (schema) {
@@ -112,7 +112,7 @@ function useForm(callback, defaultValues, schema) {
   );
 
   const resetForm = useCallback(
-    function() {
+    function () {
       setValues({ ...defaultValues });
       setErrors(validateDefault(defaultValues, schema));
       setShowErrors(false);
@@ -134,7 +134,7 @@ function useForm(callback, defaultValues, schema) {
     errors,
     hasError,
     disable,
-    resetForm
+    resetForm,
   };
 }
 

@@ -18,21 +18,21 @@ import useForm from "../hooks/useForm";
 import IPMaskedInput from "./IPMaskedInput";
 import { IP_REGEX, LEASE_EXPIRATIONS } from "../lib/constants";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   card: {
-    minWidth: 275
+    minWidth: 275,
   },
   button: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   container: {
     display: "flex",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
   },
   textField: {
     marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1)
-  }
+    marginRight: theme.spacing(1),
+  },
 }));
 
 const SAVE_RANGE_QUERY = gql`
@@ -67,21 +67,21 @@ export function DHCPRangeForm({ submitForm }) {
   const defaultDhcpRange = {
     startIp: "",
     endIp: "",
-    leaseExpiry: ""
+    leaseExpiry: "",
   };
 
   const { values, handleChange, handleSubmit, hasError, disable } = useForm(
-    variables => {
+    (variables) => {
       saveDhcpRange({ variables });
       submitForm && submitForm(variables);
     },
     saveData?.dhcpRange || getData?.dhcpRange || defaultDhcpRange,
     object({
       startIp: string().matches(IP_REGEX, {
-        message: "IP Address Required"
+        message: "IP Address Required",
       }),
       endIp: string().matches(IP_REGEX, { message: "IP Address Required" }),
-      leaseExpiry: string()
+      leaseExpiry: string(),
     })
   );
 
@@ -110,7 +110,7 @@ export function DHCPRangeForm({ submitForm }) {
             margin="normal"
             variant="outlined"
             InputProps={{
-              inputComponent: IPMaskedInput
+              inputComponent: IPMaskedInput,
             }}
           />
 
@@ -124,7 +124,7 @@ export function DHCPRangeForm({ submitForm }) {
             margin="normal"
             variant="outlined"
             InputProps={{
-              inputComponent: IPMaskedInput
+              inputComponent: IPMaskedInput,
             }}
           />
 
@@ -138,12 +138,12 @@ export function DHCPRangeForm({ submitForm }) {
             variant="outlined"
             SelectProps={{
               MenuProps: {
-                className: classes.menu
-              }
+                className: classes.menu,
+              },
             }}
             margin="normal"
           >
-            {LEASE_EXPIRATIONS.map(option => (
+            {LEASE_EXPIRATIONS.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
@@ -167,5 +167,5 @@ export function DHCPRangeForm({ submitForm }) {
 }
 
 DHCPRangeForm.propTypes = {
-  submitForm: PropTypes.func
+  submitForm: PropTypes.func,
 };

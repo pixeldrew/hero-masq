@@ -14,18 +14,18 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 
 import useForm from "../hooks/useForm";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   button: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   container: {
     display: "flex",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
   },
   textField: {
     marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1)
-  }
+    marginRight: theme.spacing(1),
+  },
 }));
 
 const GET_DOMAIN_NAME = gql`
@@ -46,7 +46,7 @@ const SAVE_DOMAIN_NAME = gql`
 
 export function DomainNameForm({ submitForm }) {
   const defaultValues = {
-    name: ""
+    name: "",
   };
 
   const [saveDomainName, { data: saveData }] = useMutation(SAVE_DOMAIN_NAME);
@@ -54,13 +54,13 @@ export function DomainNameForm({ submitForm }) {
   const { loading, error, data: getData } = useQuery(GET_DOMAIN_NAME);
 
   const { values, handleChange, handleSubmit, hasError, disable } = useForm(
-    variables => {
+    (variables) => {
       saveDomainName({ variables });
       submitForm && submitForm();
     },
     saveData?.domain || getData?.domain || defaultValues,
     object({
-      name: string().required("Domain Name is Required")
+      name: string().required("Domain Name is Required"),
     })
   );
 
@@ -107,5 +107,5 @@ export function DomainNameForm({ submitForm }) {
 }
 
 DomainNameForm.propTypes = {
-  submitForm: PropTypes.func
+  submitForm: PropTypes.func,
 };

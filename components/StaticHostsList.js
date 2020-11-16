@@ -11,13 +11,13 @@ import Button from "@material-ui/core/Button";
 
 import { DeleteDialog } from "./DeleteDialog";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   table: {
-    minWidth: 650
+    minWidth: 650,
   },
   button: {
-    margin: theme.spacing(1)
-  }
+    margin: theme.spacing(1),
+  },
 }));
 
 export function StaticHostsList({ editHost, deleteHost, staticHosts }) {
@@ -40,7 +40,7 @@ export function StaticHostsList({ editHost, deleteHost, staticHosts }) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {staticHosts.map(host => (
+        {staticHosts.map((host) => (
           <TableRow key={`staticHost-${host.id}`}>
             <TableCell>{host.ip}</TableCell>
             <TableCell>{host.host}</TableCell>
@@ -74,5 +74,5 @@ export function StaticHostsList({ editHost, deleteHost, staticHosts }) {
 StaticHostsList.propTypes = {
   editHost: PropTypes.func,
   deleteHost: PropTypes.func,
-  staticHosts: PropTypes.array
+  staticHosts: PropTypes.array,
 };

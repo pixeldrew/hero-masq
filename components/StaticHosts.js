@@ -9,11 +9,11 @@ import Paper from "@material-ui/core/Paper";
 import { StaticHostForm } from "./StaticHostForm";
 import { StaticHostsList } from "./StaticHostsList";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   h1: {
     padding: "16px 25px 0",
-    margin: 0
-  }
+    margin: 0,
+  },
 }));
 
 export const STATIC_HOSTS_QUERY = gql`
@@ -74,9 +74,9 @@ export function StaticHosts() {
       const { staticHosts } = cache.readQuery({ query: STATIC_HOSTS_QUERY });
       cache.writeQuery({
         query: STATIC_HOSTS_QUERY,
-        data: { staticHosts: [...staticHosts, addStaticHost] }
+        data: { staticHosts: [...staticHosts, addStaticHost] },
       });
-    }
+    },
   });
   const [updateStaticHost] = useMutation(UPDATE_STATIC_HOST);
   const [deleteStaticHost] = useMutation(DELETE_STATIC_HOST, {
@@ -85,17 +85,17 @@ export function StaticHosts() {
       cache.writeQuery({
         query: STATIC_HOSTS_QUERY,
         data: {
-          staticHosts: staticHosts.filter(x => x.id !== deleteStaticHost)
-        }
+          staticHosts: staticHosts.filter((x) => x.id !== deleteStaticHost),
+        },
       });
-    }
+    },
   });
 
-  const upsertHost = submitValues => {
+  const upsertHost = (submitValues) => {
     const { id, ...variables } = submitValues;
     if (edit) {
       updateStaticHost({
-        variables: { id, staticHost: { ...variables } }
+        variables: { id, staticHost: { ...variables } },
       });
     } else {
       addStaticHost({ variables: { staticHost: { ...variables } } });
@@ -105,7 +105,7 @@ export function StaticHosts() {
     setCurrentHost(null);
   };
 
-  const delHost = id => {
+  const delHost = (id) => {
     deleteStaticHost({ variables: { id } });
   };
 
@@ -135,7 +135,7 @@ export function StaticHosts() {
       <StaticHostsList
         staticHosts={staticHosts}
         deleteHost={delHost}
-        editHost={host => {
+        editHost={(host) => {
           let { __typename, ...newHost } = host;
           setEdit(true);
           setCurrentHost(newHost);

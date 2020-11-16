@@ -15,12 +15,12 @@ import { Notifier } from "../components/Notifier";
 import { useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     background: "grey",
     padding: theme.spacing(3, 2),
-    flexGrow: 1
-  }
+    flexGrow: 1,
+  },
 }));
 
 const LOG_MESSAGE_SUBSCRIPTION = gql`
@@ -38,7 +38,7 @@ function Home({ headers }) {
 
   const {
     data: { logMessage: { logTime = null, message = "", type = "" } = {} } = {},
-    loading
+    loading,
   } = useSubscription(LOG_MESSAGE_SUBSCRIPTION);
 
   return (
@@ -80,7 +80,7 @@ Home.getInitialProps = ({ res, req }) => {
   if (req) {
     if (!req.user) {
       res.writeHead(302, {
-        Location: "/login"
+        Location: "/login",
       });
       res.end();
     }
@@ -90,7 +90,7 @@ Home.getInitialProps = ({ res, req }) => {
 };
 
 Home.propTypes = {
-  headers: PropTypes.object
+  headers: PropTypes.object,
 };
 
 export default Home;

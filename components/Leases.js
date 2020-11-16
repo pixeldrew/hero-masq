@@ -9,11 +9,11 @@ import Paper from "@material-ui/core/Paper";
 import { LastUpdated } from "./LastUpdated";
 import { LeaseList } from "./LeaseList";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   h1: {
     padding: "16px 25px 0",
-    margin: 0
-  }
+    margin: 0,
+  },
 }));
 
 export const LEASES_QUERY = gql`
@@ -33,7 +33,7 @@ export function Leases() {
     loading,
     error,
     data: { leases } = { leases: [] },
-    refetch
+    refetch,
   } = useQuery(LEASES_QUERY);
 
   const classes = useStyles();

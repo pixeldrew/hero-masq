@@ -11,29 +11,29 @@ import Container from "@material-ui/core/Container";
 
 import useForm from "../hooks/useForm";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   "@global": {
     body: {
-      backgroundColor: theme.palette.common.white
-    }
+      backgroundColor: theme.palette.common.white,
+    },
   },
   paper: {
     marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 export default function SignIn({ submitForm, loginStatus }) {
@@ -41,7 +41,7 @@ export default function SignIn({ submitForm, loginStatus }) {
 
   const { values, handleChange, handleSubmit } = useForm(submitForm, {
     username: "",
-    password: ""
+    password: "",
   });
 
   return (
@@ -98,5 +98,5 @@ export default function SignIn({ submitForm, loginStatus }) {
 
 SignIn.propTypes = {
   submitForm: PropTypes.func.isRequired,
-  loginStatus: PropTypes.string
+  loginStatus: PropTypes.string,
 };

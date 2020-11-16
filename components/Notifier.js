@@ -7,12 +7,12 @@ let displayed = [];
 export function Notifier({ message, time, options = {} }) {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const storeDisplayed = id => {
+  const storeDisplayed = (id) => {
     displayed = [...displayed, id];
   };
 
-  const removeDisplayed = id => {
-    displayed = [...displayed.filter(key => id !== key)];
+  const removeDisplayed = (id) => {
+    displayed = [...displayed.filter((key) => id !== key)];
   };
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function Notifier({ message, time, options = {} }) {
       },
       onExited: (event, myKey) => {
         removeDisplayed(myKey);
-      }
+      },
     });
 
     storeDisplayed(time);
@@ -42,5 +42,5 @@ export function Notifier({ message, time, options = {} }) {
 Notifier.propTypes = {
   message: PropTypes.string,
   time: PropTypes.string,
-  options: PropTypes.object
+  options: PropTypes.object,
 };
