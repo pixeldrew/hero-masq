@@ -44,7 +44,7 @@
     "@material-ui/data-grid": "^4.0.0-alpha.18",
     "@material-ui/icons": "^4.9.1",
     "apollo-cache-inmemory": "^1.6.6",
-    "apollo-client": "^2.6.8",
+    "apollo-client": "^2.6.10",
     "apollo-link": "^1.2.14",
     "apollo-link-context": "^1.0.20",
     "apollo-link-error": "^1.1.13",
