@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "nodemon server",
     "build": "next build",
-    "prepare": "npm run clean && npm run build",
     "start": "NODE_ENV=production node server",
     "test": "NODE_ENV=test jest --projects ./ server",
     "clean": "rimraf .next/ coverage/"
