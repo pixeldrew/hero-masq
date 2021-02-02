@@ -5,8 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Button from "@material-ui/core/Button";
+
 import MenuItem from "@material-ui/core/MenuItem";
 
 import gql from "graphql-tag";
@@ -17,6 +16,8 @@ import useForm from "../hooks/useForm";
 
 import IPMaskedInput from "./IPMaskedInput";
 import { IP_REGEX, LEASE_EXPIRATIONS } from "../lib/constants";
+import SaveIcon from "@material-ui/icons/Save";
+import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -92,77 +93,71 @@ export function DHCPRangeForm({ submitForm }) {
   if (error) return <p>error</p>;
 
   return (
-    <Card className={classes.card}>
-      <form
-        className={classes.container}
-        noValidate
-        autoComplete="off"
-        onSubmit={handleSubmit}
+    <form
+      className={classes.container}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
+      <TextField
+        id="lease-expiry"
+        select
+        label="Lease Expiry"
+        className={classes.textField}
+        value={values.leaseExpiry}
+        onChange={handleChange("leaseExpiry")}
+        variant="outlined"
+        SelectProps={{
+          MenuProps: {
+            className: classes.menu,
+          },
+        }}
+        margin="normal"
       >
-        <CardContent>
-          <TextField
-            id="startIp"
-            label="Start Ip"
-            error={hasError("startIp")}
-            className={classes.textField}
-            value={values.startIp}
-            onChange={handleChange}
-            margin="normal"
-            variant="outlined"
-            InputProps={{
-              inputComponent: IPMaskedInput,
-            }}
-          />
+        {LEASE_EXPIRATIONS.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+      <TextField
+        id="startIp"
+        label="Start Ip"
+        error={hasError("startIp")}
+        className={classes.textField}
+        value={values.startIp}
+        onChange={handleChange}
+        margin="normal"
+        variant="outlined"
+        InputProps={{
+          inputComponent: IPMaskedInput,
+        }}
+      />
 
-          <TextField
-            id="endIp"
-            label="End Ip"
-            error={hasError("endIp")}
-            className={classes.textField}
-            value={values.endIp}
-            onChange={handleChange}
-            margin="normal"
-            variant="outlined"
-            InputProps={{
-              inputComponent: IPMaskedInput,
-            }}
-          />
+      <TextField
+        id="endIp"
+        label="End Ip"
+        error={hasError("endIp")}
+        className={classes.textField}
+        value={values.endIp}
+        onChange={handleChange}
+        margin="normal"
+        variant="outlined"
+        InputProps={{
+          inputComponent: IPMaskedInput,
+        }}
+      />
 
-          <TextField
-            id="lease-expiry"
-            select
-            label="Lease Expiry"
-            className={classes.textField}
-            value={values.leaseExpiry}
-            onChange={handleChange("leaseExpiry")}
-            variant="outlined"
-            SelectProps={{
-              MenuProps: {
-                className: classes.menu,
-              },
-            }}
-            margin="normal"
-          >
-            {LEASE_EXPIRATIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-        </CardContent>
-        <CardActions>
-          <Button
-            color="primary"
-            className={classes.button}
-            type="submit"
-            variant="outlined"
-            disabled={disable}
-          >
-            Save
-          </Button>
-        </CardActions>
-      </form>
-    </Card>
+      <IconButton
+        type="submit"
+        variant="outlined"
+        aria-label="save"
+        size="small"
+        className={classes.button}
+      >
+        <SaveIcon />
+      </IconButton>
+    </form>
   );
 }
 

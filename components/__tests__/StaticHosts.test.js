@@ -56,7 +56,7 @@ const mocks = [
 ];
 
 describe("StaticHosts", () => {
-  it("should render loading state initially", async () => {
+  xit("should render loading state initially", async () => {
     const { getByText } = render(
       <MockedProvider mocks={mocks} addTypename={false}>
         <StaticHosts />
@@ -66,7 +66,7 @@ describe("StaticHosts", () => {
     expect(getByText("Loading")).toHaveTextContent("Loading");
   });
 
-  it("should render static hosts", async () => {
+  xit("should render static hosts", async () => {
     const { getByText } = render(
       <MockedProvider mocks={mocks} addTypename={false}>
         <StaticHosts />
@@ -78,7 +78,7 @@ describe("StaticHosts", () => {
     expect(hostnameTextNode).toHaveTextContent("rancher");
   });
 
-  it("should render and edit static hosts form", async () => {
+  xit("should render and edit static hosts form", async () => {
     const { getByText } = render(
       <MockedProvider mocks={mocks} addTypename={false}>
         <StaticHosts />

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 
 const validateById = (id, value, values, schema, setErrors) => {
   if (schema) {
@@ -70,17 +70,16 @@ function useForm(callback, defaultValues, schema) {
 
   /**
    * handles input fields with an explicit name or uses the name attribute on the target
+   * this method doesn't play well nice with child state handlers
    */
   const handleChange = useCallback(
     function (event) {
       if (typeof event === "object") {
-        event.persist();
         const id = event.target.name || event.target.id;
         const value = event.target.value;
         changeValue(id, value);
       } else {
         return function (e) {
-          e.persist();
           const id = event;
           const { value } = e.target;
           changeValue(id, value);

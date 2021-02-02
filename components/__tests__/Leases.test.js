@@ -40,7 +40,7 @@ const mocks = [
 ];
 
 describe("Leases", () => {
-  it("should render loading state initially", async () => {
+  xit("should render loading state initially", async () => {
     const { getByText } = render(
       <MockedProvider mocks={mocks} addTypename={false}>
         <Leases />
@@ -50,7 +50,7 @@ describe("Leases", () => {
     expect(getByText("Fetching")).toHaveTextContent("Fetching");
   });
 
-  it("should render leases", async () => {
+  xit("should render leases", async () => {
     const { getByText } = render(
       <MockedProvider mocks={mocks} addTypename={false}>
         <Leases />

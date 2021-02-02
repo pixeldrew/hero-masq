@@ -1,6 +1,6 @@
 const { gql } = require("apollo-server-express");
 const fse = require("fs-extra");
-const dnsmasqLeases = require("dnsmasq-leases");
+const dnsmasqLeases = require("../lib/dnsmasq/leases");
 const logger = require("../lib/logger");
 const chokidar = require("chokidar");
 const { info: logInfo } = require("../lib/log-subscription");

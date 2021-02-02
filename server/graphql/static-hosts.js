@@ -19,6 +19,8 @@ module.exports.typeDef = gql`
     leaseExpiry: String
     "mac address"
     mac: String
+    "tags (comma seperated input)"
+    tags: String
   }
 
   input StaticHostInput {
@@ -32,6 +34,8 @@ module.exports.typeDef = gql`
     leaseExpiry: String
     "mac address"
     mac: String
+    "tags (comma seperated input)"
+    tags: String
   }
 
   extend type Query {

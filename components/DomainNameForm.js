@@ -3,9 +3,7 @@ import PropTypes from "prop-types";
 
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 
 import { object, string } from "yup";
@@ -13,6 +11,8 @@ import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 
 import useForm from "../hooks/useForm";
+import SaveIcon from "@material-ui/icons/Save";
+import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -71,38 +71,36 @@ export function DomainNameForm({ submitForm }) {
   if (error) return <p>Error</p>;
 
   return (
-    <Card>
-      <form
-        className={classes.container}
-        noValidate
-        autoComplete="off"
-        onSubmit={handleSubmit}
-      >
-        <CardContent>
-          <TextField
-            id="name"
-            label="Domain Name"
-            className={classes.textField}
-            value={values.name}
-            onChange={handleChange}
-            error={hasError("name")}
-            margin="normal"
-            variant="outlined"
-          />
-        </CardContent>
-        <CardActions>
-          <Button
-            color="primary"
-            variant="outlined"
-            className={classes.button}
-            type="submit"
-            disabled={disable}
-          >
-            Save
-          </Button>
-        </CardActions>
-      </form>
-    </Card>
+    <form
+      className={classes.container}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
+      <TextField
+        id="name"
+        label="Domain Name"
+        className={classes.textField}
+        value={values.name}
+        onChange={handleChange}
+        error={hasError("name")}
+        margin="normal"
+        variant="outlined"
+        InputProps={{
+          endAdornment: (
+            <IconButton
+              type="submit"
+              variant="outlined"
+              aria-label="save"
+              className={classes.button}
+              size="small"
+            >
+              <SaveIcon />
+            </IconButton>
+          ),
+        }}
+      />
+    </form>
   );
 }
 

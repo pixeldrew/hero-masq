@@ -3,7 +3,7 @@
 
 module.exports.LEASE_FILE =
   process.env.NODE_ENV !== "production"
-    ? __dirname + "/__tests__/data/dnsmasq.leases"
+    ? __dirname + "/dnsmasq/__tests__/data/dnsmasq.leases"
     : "/var/lib/dnsmasqd/dnsmasq.leases";
 
 module.exports.LOG_MESSAGE_TOPIC = "log_message";

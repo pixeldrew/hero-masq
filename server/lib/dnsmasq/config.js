@@ -8,7 +8,7 @@ const { error: logError, success: logSuccess } = require("../log-subscription");
 const pubsub = require("../pubsub");
 const { DNSMASQ_CONFIG_SAVED_TOPIC } = require("../constants");
 
-const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
+const HOST_CONFIG_KEYS = ["mac", "tags", "client", "ip", "host", "leaseExpiry"];
 
 const { HOST_IP, ROUTER_IP, NODE_ENV, DNSMASQ_CONF_LOCATION } = process.env;
 
@@ -49,12 +49,24 @@ function getDhcpHost(domain, host) {
     )}\n`;
   } else {
     hostConfig = `dhcp-host=${configKeys
-      .map((k) => host[k] || "")
+      .map(mapHostToKeys.bind(host))
       .filter((x) => x)
       .join(",")}\n`;
   }
 
   return hostConfig;
+}
+
+function mapHostToKeys(k) {
+  if (k === "tags" && this[k]) {
+    return this[k]
+      .split(",")
+      .filter((x) => x)
+      .map((x) => `set:${x.trim()}`)
+      .join(",");
+  } else {
+    return this[k] || "";
+  }
 }
 
 function getStaticHosts({ name }, staticHosts) {
