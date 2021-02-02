@@ -8,7 +8,7 @@ const { error: logError, success: logSuccess } = require("../log-subscription");
 const pubsub = require("../pubsub");
 const { DNSMASQ_CONFIG_SAVED_TOPIC } = require("../constants");
 
-const HOST_CONFIG_KEYS = ["mac", "client", "ip", "host", "leaseExpiry"];
+const HOST_CONFIG_KEYS = ["mac", "tags", "client", "ip", "host", "leaseExpiry"];
 
 const { HOST_IP, ROUTER_IP, NODE_ENV, DNSMASQ_CONF_LOCATION } = process.env;
 
@@ -49,12 +49,24 @@ function getDhcpHost(domain, host) {
     )}\n`;
   } else {
     hostConfig = `dhcp-host=${configKeys
-      .map(k => host[k] || "")
-      .filter(x => x)
+      .map(mapHostToKeys.bind(host))
+      .filter((x) => x)
       .join(",")}\n`;
   }
 
   return hostConfig;
+}
+
+function mapHostToKeys(k) {
+  if (k === "tags" && this[k]) {
+    return this[k]
+      .split(",")
+      .filter((x) => x)
+      .map((x) => `set:${x.trim()}`)
+      .join(",");
+  } else {
+    return this[k] || "";
+  }
 }
 
 function getStaticHosts({ name }, staticHosts) {
@@ -137,7 +149,7 @@ function config({ domain, dhcpRange, staticHosts }) {
     try {
       fse.outputFileSync(path.resolve(confPath, "hero-masq.conf"), config, {
         encoding: "utf8",
-        flag: "w"
+        flag: "w",
       });
 
       fse.outputFileSync(
@@ -145,7 +157,7 @@ function config({ domain, dhcpRange, staticHosts }) {
         JSON.stringify({ domain, dhcpRange, staticHosts }, null, 4),
         {
           encoding: "utf8",
-          flag: "w"
+          flag: "w",
         }
       );
       logSuccess(`wrote config, ${confPath}`);
@@ -165,7 +177,7 @@ function getConfig() {
   try {
     return JSON.parse(
       fse.readFileSync(filename, {
-        encoding: "utf8"
+        encoding: "utf8",
       })
     );
   } catch (e) {
@@ -173,7 +185,7 @@ function getConfig() {
     return {
       domain: { name: "" },
       staticHosts: [],
-      dhcpRange: { startIp: "", endIp: "", leaseExpiry: "" }
+      dhcpRange: { startIp: "", endIp: "", leaseExpiry: "" },
     };
   }
 }
@@ -182,5 +194,5 @@ module.exports = {
   writeBaseConfig,
   _writeConfig: config,
   writeConfig: debounce(config, 500),
-  getConfig
+  getConfig,
 };

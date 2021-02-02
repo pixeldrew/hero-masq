@@ -24,12 +24,12 @@ module.exports.typeDef = gql`
   }
 `;
 
-module.exports.resolvers = initialData => {
+module.exports.resolvers = (initialData) => {
   let dhcpRange = { ...initialData };
 
   return {
     Query: {
-      dhcpRange: () => dhcpRange
+      dhcpRange: () => dhcpRange,
     },
     Mutation: {
       saveDHCPRange: (parent, args) => {
@@ -38,7 +38,7 @@ module.exports.resolvers = initialData => {
         pubsub.publish(CONFIG_DHCP_RANGE_UPDATED, dhcpRange);
 
         return dhcpRange;
-      }
-    }
+      },
+    },
   };
 };

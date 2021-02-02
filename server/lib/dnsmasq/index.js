@@ -14,5 +14,5 @@ if (IN_DOCKER && IN_DOCKER === "true") {
 module.exports = {
   reload,
   getConfig,
-  writeConfig
+  writeConfig,
 };

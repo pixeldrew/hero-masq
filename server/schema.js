@@ -7,27 +7,27 @@ const {
   CONFIG_DOMAIN_UPDATED,
   CONFIG_DHCP_RANGE_UPDATED,
   CONFIG_STATIC_HOSTS_UPDATED,
-  LOG_MESSAGE_TOPIC
+  LOG_MESSAGE_TOPIC,
 } = require("./lib/constants");
 
 const {
   typeDef: staticHostsTypeDef,
-  resolvers: staticHostsResolver
+  resolvers: staticHostsResolver,
 } = require("./graphql/static-hosts");
 
 const {
   typeDef: leasesTypeDef,
-  resolvers: leasesResolver
+  resolvers: leasesResolver,
 } = require("./graphql/leases");
 
 const {
   typeDef: dhcpRangeTypeDef,
-  resolvers: dhcpRangeResolver
+  resolvers: dhcpRangeResolver,
 } = require("./graphql/dhcp-range");
 
 const {
   typeDef: domainTypeDef,
-  resolvers: domainResolver
+  resolvers: domainResolver,
 } = require("./graphql/domain");
 
 const Root = gql`
@@ -61,9 +61,9 @@ const logMessageTypeDef = gql`
 const logMessageResolver = () => ({
   Subscription: {
     logMessage: {
-      subscribe: () => pubsub.asyncIterator([LOG_MESSAGE_TOPIC])
-    }
-  }
+      subscribe: () => pubsub.asyncIterator([LOG_MESSAGE_TOPIC]),
+    },
+  },
 });
 
 const config = getConfig();
@@ -90,7 +90,7 @@ module.exports = {
     staticHostsTypeDef,
     leasesTypeDef,
     dhcpRangeTypeDef,
-    domainTypeDef
+    domainTypeDef,
   ],
   resolvers: merge(
     logMessageResolver(),
@@ -98,5 +98,5 @@ module.exports = {
     dhcpRangeResolver(config.dhcpRange),
     domainResolver(config.domain),
     staticHostsResolver(config.staticHosts)
-  )
+  ),
 };

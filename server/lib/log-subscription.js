@@ -3,7 +3,7 @@ const { LOG_MESSAGE_TOPIC } = require("./constants");
 
 function log(message, type) {
   pubsub.publish(LOG_MESSAGE_TOPIC, {
-    logMessage: { logTime: new Date(), message, type }
+    logMessage: { logTime: new Date(), message, type },
   });
 }
 

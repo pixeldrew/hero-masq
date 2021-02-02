@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const { USER_NAME, JWT_SECRET } = process.env;
 
-module.exports = token => {
+module.exports = (token) => {
   let user = {};
 
   try {

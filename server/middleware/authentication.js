@@ -10,7 +10,7 @@ const expiresIn = 1000 * 60 * 60 * 24 * 14;
 
 const cookieOptions = { path: "/", maxAge: expiresIn, httpOnly: true };
 
-const getToken = req => {
+const getToken = (req) => {
   if (
     req.headers.authorization &&
     req.headers.authorization.split(" ")[0] === "Bearer"
@@ -29,7 +29,7 @@ const validateUser = (req, res, next) => {
 
     return next(
       new UnauthorizedError("unknown_user", {
-        message: `Unknown User [${req.user.username}]`
+        message: `Unknown User [${req.user.username}]`,
       })
     );
   }
@@ -46,16 +46,17 @@ const noSecurePaths = {
     /^\/_next\/.*$/,
     /^\/static\/.*$/,
     "/favicon.ico",
-    "manifest.json"
-  ]
+    "manifest.json",
+  ],
 };
 
 module.exports = function authentication(app) {
   app.use(
     expressJWT({
       secret: JWT_SECRET,
+      algorithms: ["HS256"],
       getToken,
-      credentialsRequired: false
+      credentialsRequired: false,
     }).unless(noSecurePaths),
     validateUser.unless(noSecurePaths)
   );
@@ -66,14 +67,19 @@ module.exports = function authentication(app) {
       const token = jwt.sign(
         {
           username,
-          exp: Math.floor(Date.now() / 1000) + Math.floor(expiresIn / 1000)
+          exp: Math.floor(Date.now() / 1000) + Math.floor(expiresIn / 1000),
+          issuer: "https://hero-masq/auth",
+          audience: "account",
         },
-        JWT_SECRET
+        JWT_SECRET,
+        {
+          algorithm: "HS256",
+        }
       );
 
       res.cookie("token", token, cookieOptions);
       res.json({
-        data: { header: `Authorization: Bearer ${token}`, redirect: "/" }
+        data: { header: `Authorization: Bearer ${token}`, redirect: "/" },
       });
     } else {
       res.status(401).send({ data: { error: "unknown_user" } });

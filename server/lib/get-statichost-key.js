@@ -1,6 +1,6 @@
 const { createHash } = require("crypto");
 
-module.exports = function(id) {
+module.exports = function (id) {
   const hash = createHash("sha1");
   hash.update("StaticHost");
   hash.update(Date.now() + "");
