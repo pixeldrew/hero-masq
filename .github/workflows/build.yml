@@ -5,17 +5,29 @@ on:
     branches: master
 
 jobs:
-  build:
+  main:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - uses: docker/setup-buildx-action@v1
-        id: buildx
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
-          install: true
-      - name: build the image
-        run: |
-          docker buildx build \
-            --tag pixeldrew/hero-masq:latest \
-            --platform linux/amd64,linux/arm/v7,linux/arm64 .
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: pixeldrew/hero-masq:latest
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/386
+      -
+        name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
