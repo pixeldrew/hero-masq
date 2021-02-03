@@ -34,8 +34,8 @@ RUN echo -e "ENABLED=1\nIGNORE_RESOLVCONF=yes" > /etc/default/dnsmasq
 
 COPY package*.json ./
 
-COPY --from=builder /usr/src/hero-masq/node_modules .
-COPY --from=builder /usr/src/hero-masq/.next .
+COPY --from=builder /usr/src/hero-masq/node_modules ./node_modules
+COPY --from=builder /usr/src/hero-masq/.next ./.next
 
 COPY . .
 
