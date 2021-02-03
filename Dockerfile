@@ -2,7 +2,7 @@ FROM node:lts-alpine3.12 as builder
 LABEL maintainer="drew@foe.hn"
 
 ## Install build toolchain, install node deps and compile native add-ons
-RUN apk add --no-cache python make g++
+RUN apk add --no-cache python3 make g++ && python3 get-pip.py \
 
 WORKDIR /usr/src/hero-masq
 
