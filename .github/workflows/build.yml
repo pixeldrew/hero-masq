@@ -27,7 +27,7 @@ jobs:
         with:
           push: true
           tags: pixeldrew/hero-masq:latest
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64, linux/arm/v7
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
