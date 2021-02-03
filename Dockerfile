@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:lts-alpine3.12
 LABEL maintainer="drew@foe.hn"
 
 WORKDIR /usr/src/hero-masq
