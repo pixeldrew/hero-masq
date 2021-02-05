@@ -13,15 +13,11 @@ import { StaticHostsList } from "./StaticHostsList";
 import AddIcon from "@material-ui/icons/Add";
 
 const useStyles = makeStyles((theme) => ({
-  h1: {
-    padding: "16px 25px 0",
-    margin: 0,
-  },
   fabParent: {},
   fab: {
     position: "sticky",
-    bottom: "20px",
-    margin: "-60px 20px",
+    bottom: theme.spacing(2),
+    margin: theme.spacing(-10, 3),
     float: "right",
   },
 }));
