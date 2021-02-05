@@ -2,24 +2,25 @@ import React, { useLayoutEffect, useRef } from "react";
 import PropTypes from "prop-types";
 
 import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-
+import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-
-import { DeleteDialog } from "./DeleteDialog";
-import Paper from "@material-ui/core/Paper";
-import TableContainer from "@material-ui/core/TableContainer";
-import { formatDistance } from "date-fns";
 import { DataGrid } from "@material-ui/data-grid";
 
+import { DeleteDialog } from "./DeleteDialog";
+
+import { compareIPAddresses } from "../lib/ip";
+
 const useStyles = makeStyles((theme) => ({
-  table: {
-    minWidth: 650,
+  gridWrapper: {
+    padding: theme.spacing(1, 2, 2),
+    "& .MuiTablePagination-root": {
+      marginRight: "60px",
+    },
+  },
+  header: {
+    margin: theme.spacing(1, 2, -1),
+    padding: theme.spacing(1, 0),
   },
   button: {
     margin: theme.spacing(1),
@@ -30,7 +31,12 @@ export function StaticHostsList({ editHost, deleteHost, staticHosts }) {
   const classes = useStyles();
 
   const columns = [
-    { field: "ip", headerName: "IP", width: 120 },
+    {
+      field: "ip",
+      headerName: "IP",
+      width: 120,
+      sortComparator: compareIPAddresses,
+    },
     { field: "host", headerName: "Host Name", flex: 1 },
     { field: "mac", headerName: "Mac Address", flex: 0.7 },
     { field: "client", headerName: "Client Label", flex: 0.2 },
@@ -90,17 +96,21 @@ export function StaticHostsList({ editHost, deleteHost, staticHosts }) {
   });
 
   return (
-    <div ref={gridWrapperRef}>
-      <DataGrid
-        autoHeight={true}
-        rows={rows}
-        columns={columns}
-        pageSize={20}
-        density="compact"
-        disableSelectionOnClick={true}
-        hideFooterPagination={true}
-      />
-    </div>
+    <>
+      <Typography className={classes.header} component="h2" variant="h5">
+        Static Hosts
+      </Typography>
+      <div ref={gridWrapperRef} className={classes.gridWrapper}>
+        <DataGrid
+          autoHeight={true}
+          rows={rows}
+          pageSize={20}
+          columns={columns}
+          density="compact"
+          disableSelectionOnClick={true}
+        />
+      </div>
+    </>
   );
 }
 
