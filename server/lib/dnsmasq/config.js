@@ -49,7 +49,12 @@ function getDhcpHost(domain, host) {
     )}\n`;
   } else {
     hostConfig = `dhcp-host=${configKeys
-      .map(k => host[k] || "")
+      .map(k => {
+        if(k === 'client') {
+          return `id:${host[k]}`;
+        }
+        return host[k] || ""
+      })
       .filter(x => x)
       .join(",")}\n`;
   }
