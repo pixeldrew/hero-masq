@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const useModal = function() {
+const useModal = function () {
   const [modalOpen, setModalOpen] = useState(false);
 
   const onClickOpen = () => {
@@ -14,7 +14,7 @@ const useModal = function() {
   return {
     modalOpen,
     onClickOpen,
-    onClickClose
+    onClickClose,
   };
 };
 

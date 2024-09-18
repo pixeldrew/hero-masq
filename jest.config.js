@@ -29,7 +29,7 @@ module.exports = {
     "!**/vendor/**",
     "!**.config.js",
     "!./coverage/**",
-    "!./server/**"
+    "!./server/**",
   ],
 
   // The directory where Jest should output its coverage files
@@ -129,7 +129,7 @@ module.exports = {
   testPathIgnorePatterns: [
     "<rootDir>/server/",
     "<rootDir>/.next/",
-    "<rootDir>/node_modules/"
+    "<rootDir>/node_modules/",
   ],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
@@ -139,7 +139,7 @@ module.exports = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "jsdom"
+  testEnvironment: "jsdom",
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},

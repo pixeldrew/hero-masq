@@ -55,7 +55,7 @@ const apolloServer = new ApolloServer({
   subscriptions: {
     path: "/heromasq-gql",
     // returns ws context
-    onConnect: connectionParams => {
+    onConnect: (connectionParams) => {
       try {
         if (connectionParams.authToken) {
           return verifyToken(connectionParams.authToken);
@@ -66,8 +66,8 @@ const apolloServer = new ApolloServer({
         );
       }
     },
-    onDisconnect: (webSocket, context) => {}
-  }
+    onDisconnect: (webSocket, context) => {},
+  },
 });
 
 const httpServer = createServer(app);
@@ -84,7 +84,7 @@ app.use(
 // maybe move below ApolloServer when we decide what authentication strategy to use (in graph or http)
 authMiddleware(app);
 
-// attach ApolloServer to expressApp by /graphql
+// attach ApolloServer to expressApp by /heromasq-gql
 apolloServer.applyMiddleware({ app, path: "/heromasq-gql" });
 
 apolloServer.installSubscriptionHandlers(httpServer);
@@ -98,7 +98,7 @@ app.get("/service-worker.js", (req, res) =>
 app.get("*", nextRequestHandler);
 
 // unauthorized error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   if (err.name === "UnauthorizedError") {
     res.status(401).send("invalid token...");
   }
@@ -108,7 +108,7 @@ app.use(function(err, req, res, next) {
 
 // start next.js
 nextApp.prepare().then(() => {
-  httpServer.listen(port, err => {
+  httpServer.listen(port, (err) => {
     if (err) throw err;
     logger.info(`Server Ready at http://localhost:${port}`);
     logger.info(

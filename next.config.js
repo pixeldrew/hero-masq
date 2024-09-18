@@ -15,7 +15,7 @@ const env = Object.entries(process.env)
 const nextConfig = {
   dev,
   env: {
-    ...env
+    ...env,
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Note: we provide webpack above so you should not `require` it
@@ -29,15 +29,15 @@ const nextConfig = {
         loader: "eslint-loader",
         options: {
           fix: true,
-          cache: true
-        }
+          cache: true,
+        },
       });
     }
 
     // Example using webpack option
     config.plugins.push(new webpack.IgnorePlugin(/\/__tests__\//));
     return config;
-  }
+  },
 };
 
 module.exports = withOffline(nextConfig);

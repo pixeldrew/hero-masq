@@ -1,7 +1,26 @@
-FROM node:alpine
+FROM node:lts-alpine3.12 as builder
 LABEL maintainer="drew@foe.hn"
 
+## Install build toolchain, install node deps and compile native add-ons
+RUN apk add --no-cache python3 make g++ py3-pip
+
+RUN mkdir -p /usr/src/hero-masq
+
 WORKDIR /usr/src/hero-masq
+
+COPY package*.json ./
+
+RUN npm install --production
+
+COPY . .
+
+RUN npm run build
+
+FROM node:lts-alpine3.12 as app
+
+WORKDIR /usr/src/hero-masq
+
+RUN mkdir -p /usr/src/hero-masq
 
 # fetch dnsmasq
 RUN apk update \
@@ -15,11 +34,10 @@ RUN echo -e "ENABLED=1\nIGNORE_RESOLVCONF=yes" > /etc/default/dnsmasq
 
 COPY package*.json ./
 
-RUN npm install --production
+COPY --from=builder /usr/src/hero-masq/node_modules ./node_modules
+COPY --from=builder /usr/src/hero-masq/.next ./.next
 
 COPY . .
-
-RUN npm run build
 
 RUN chmod +x ./scripts/*.sh
 RUN ./scripts/configure-supervisor.sh

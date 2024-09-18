@@ -9,7 +9,7 @@ const submitForm = async (setLoginStatus, { username, password }) => {
     const loginData = await fetch("/login", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: stringify({ username, password })
+      body: stringify({ username, password }),
     });
 
     if (loginData.status === 401) {
@@ -19,7 +19,7 @@ const submitForm = async (setLoginStatus, { username, password }) => {
     setLoginStatus("logging in");
 
     const {
-      data: { redirect }
+      data: { redirect },
     } = await loginData.json();
 
     setLoginStatus("redirecting");
@@ -30,7 +30,7 @@ const submitForm = async (setLoginStatus, { username, password }) => {
   }
 };
 
-const Login = function() {
+const Login = function () {
   const [loginStatus, setLoginStatus] = useState(null);
 
   return (

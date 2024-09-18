@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import Head from "next/head";
 import { makeStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import NoSsr from "@material-ui/core/NoSsr";
 import { SnackbarProvider } from "notistack";
 
 import { Leases } from "../components/Leases";
@@ -14,13 +15,15 @@ import { Notifier } from "../components/Notifier";
 
 import { useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import Paper from "@material-ui/core/Paper";
+import Card from "@material-ui/core/Card";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     background: "grey",
     padding: theme.spacing(3, 2),
-    flexGrow: 1
-  }
+    flexGrow: 1,
+  },
 }));
 
 const LOG_MESSAGE_SUBSCRIPTION = gql`
@@ -38,7 +41,7 @@ function Home({ headers }) {
 
   const {
     data: { logMessage: { logTime = null, message = "", type = "" } = {} } = {},
-    loading
+    loading,
   } = useSubscription(LOG_MESSAGE_SUBSCRIPTION);
 
   return (
@@ -47,23 +50,31 @@ function Home({ headers }) {
         <title>hero-masq</title>
       </Head>
       <SnackbarProvider maxSnack={3}>
-        <Grid
-          container
-          className={classes.root}
-          spacing={4}
-          justify="space-evenly"
-        >
-          <Grid item xs={4}>
-            <DomainNameForm />
+        <Grid container className={classes.root} spacing={4}>
+          <Grid item xs={12} md={4} container>
+            <Card>
+              <DomainNameForm />
+            </Card>
           </Grid>
-          <Grid item xs={8}>
-            <DHCPRangeForm />
+          <Grid item xs={12} md={8} container>
+            <Card>
+              <DHCPRangeForm />
+            </Card>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Paper>
+              <NoSsr>
+                <StaticHosts />
+              </NoSsr>
+            </Paper>
           </Grid>
           <Grid item xs={12}>
-            <StaticHosts />
-          </Grid>
-          <Grid item xs={12}>
-            <Leases />
+            <Paper>
+              <NoSsr>
+                <Leases />
+              </NoSsr>
+            </Paper>
           </Grid>
         </Grid>
         <Notifier
@@ -80,7 +91,7 @@ Home.getInitialProps = ({ res, req }) => {
   if (req) {
     if (!req.user) {
       res.writeHead(302, {
-        Location: "/login"
+        Location: "/login",
       });
       res.end();
     }
@@ -90,7 +101,7 @@ Home.getInitialProps = ({ res, req }) => {
 };
 
 Home.propTypes = {
-  headers: PropTypes.object
+  headers: PropTypes.object,
 };
 
 export default Home;

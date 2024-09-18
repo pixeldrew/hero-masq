@@ -7,6 +7,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
 
 import useModal from "../hooks/useModal";
 
@@ -15,9 +17,9 @@ export function DeleteDialog({ okHandler }) {
 
   return (
     <>
-      <Button variant="outlined" color="secondary" onClick={onClickOpen}>
-        Delete
-      </Button>
+      <IconButton variant="outlined" size="small" onClick={onClickOpen}>
+        <DeleteIcon />
+      </IconButton>
       <Dialog
         open={modalOpen}
         onClose={onClickClose}
@@ -50,5 +52,5 @@ export function DeleteDialog({ okHandler }) {
 }
 
 DeleteDialog.propTypes = {
-  okHandler: PropTypes.func
+  okHandler: PropTypes.func,
 };

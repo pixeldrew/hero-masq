@@ -19,7 +19,7 @@ export const LastUpdated = ({ triggerRefetch }) => {
   const [sinceLastUpdated, setSinceLastUpdated] = useState(new Date());
   const {
     data: { leasesUpdated: { dateUpdated = null } = {} } = {},
-    loading
+    loading,
   } = useSubscription(LEASES_UPDATED_SUBSCRIPTION);
 
   useInterval(() => {
@@ -45,5 +45,5 @@ export const LastUpdated = ({ triggerRefetch }) => {
 };
 
 LastUpdated.propTypes = {
-  triggerRefetch: PropTypes.func
+  triggerRefetch: PropTypes.func,
 };

@@ -1,52 +1,80 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import PropTypes from "prop-types";
 
 import { formatDistance } from "date-fns";
 
 import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import { DataGrid } from "@material-ui/data-grid";
+import { compareIPAddresses } from "../lib/ip";
+import Typography from "@material-ui/core/Typography";
 
-const useStyles = makeStyles(theme => ({
-  table: {
-    minWidth: 650
-  }
+const useStyles = makeStyles((theme) => ({
+  gridWrapper: {
+    padding: theme.spacing(1, 2, 2),
+  },
+  header: {
+    margin: theme.spacing(1, 2, -1),
+    padding: theme.spacing(1, 0),
+  },
 }));
 
 export function LeaseList({ leases }) {
   const classes = useStyles();
 
+  const columns = [
+    {
+      field: "ip",
+      headerName: "IP",
+      width: 120,
+      sortComparator: compareIPAddresses,
+    },
+    { field: "host", headerName: "Host Name", flex: 1 },
+    { field: "mac", headerName: "Mac Address", flex: 0.7 },
+    { field: "client", headerName: "Client Label", flex: 0.3 },
+    { field: "timestamp", headerName: "Time Stamp", flex: 0.5 },
+  ];
+
+  const rows = leases.map(({ ip, host, mac, client, timestamp }, i) => ({
+    id: i,
+    ip,
+    host,
+    mac,
+    client,
+    timestamp:
+      timestamp === "0"
+        ? "Infinite"
+        : formatDistance(new Date(timestamp * 1000), Date.now()),
+  }));
+
+  const gridWrapperRef = useRef(null);
+  useLayoutEffect(() => {
+    const gridDiv = gridWrapperRef.current;
+    if (gridDiv) {
+      const gridEl = gridDiv.querySelector("div");
+      gridEl.style.height = "";
+    }
+  });
+
   return (
-    <Table className={classes.table}>
-      <TableHead>
-        <TableRow>
-          <TableCell>IP Address</TableCell>
-          <TableCell>Host Name</TableCell>
-          <TableCell>MAC Address</TableCell>
-          <TableCell>Client ID</TableCell>
-          <TableCell>Expires</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {leases.map((lease, i) => (
-          <TableRow key={`ip-${i}`}>
-            <TableCell>{lease.ip}</TableCell>
-            <TableCell>{lease.host}</TableCell>
-            <TableCell>{lease.mac}</TableCell>
-            <TableCell>{lease.client}</TableCell>
-            <TableCell>
-              {formatDistance(new Date(lease.timestamp * 1000), Date.now())}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <Typography variant="h5" component="h2" className={classes.header}>
+        DHCP Leases
+      </Typography>
+      <div ref={gridWrapperRef} className={classes.gridWrapper}>
+        <DataGrid
+          autoHeight={true}
+          className={classes.grid}
+          rows={rows}
+          columns={columns}
+          density="compact"
+          pageSize={20}
+          disableSelectionOnClick={true}
+        />
+      </div>
+    </>
   );
 }
 
 LeaseList.propTypes = {
-  leases: PropTypes.array.isRequired
+  leases: PropTypes.array.isRequired,
 };

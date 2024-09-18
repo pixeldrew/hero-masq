@@ -4,7 +4,7 @@ const domain = { name: "testdomain.com" };
 const dhcpRange = {
   startIp: "192.168.0.10",
   endIp: "192.168.0.100",
-  leaseExpiry: "24h"
+  leaseExpiry: "24h",
 };
 const staticHosts = [
   {
@@ -12,22 +12,22 @@ const staticHosts = [
     client: "",
     ip: "192.168.0.5",
     host: "world",
-    leaseExpiry: "24h"
+    leaseExpiry: "24h",
   },
   {
     mac: "",
     client: "",
     ip: "192.168.0.5",
     host: "blah",
-    leaseExpiry: "24h"
+    leaseExpiry: "24h",
   },
   {
     mac: "",
     client: "buck",
     ip: "192.168.0.6",
     host: "",
-    leaseExpiry: "8h"
-  }
+    leaseExpiry: "8h",
+  },
 ];
 
 const testOutput = `domain=testdomain.com
@@ -44,7 +44,7 @@ describe("dnsmasq.config", () => {
       writeConfig({
         domain,
         dhcpRange,
-        staticHosts
+        staticHosts,
       })
     ).toBe(testOutput);
   });
